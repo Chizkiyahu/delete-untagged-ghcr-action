@@ -32,8 +32,13 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - --token ${{ inputs.token }}
-    - --repository_owner ${{ inputs.repository_owner }}
-    - --repository ${{ inputs.repository }}
-    - --untagged_only ${{ inputs.untagged_only }}
-    - --owner_type ${{ inputs.owner_type }}
+    - --token
+    - ${{ inputs.token }}
+    - --repository_owner
+    - ${{ inputs.repository_owner }}
+    - --repository
+    - ${{ inputs.repository }}
+    - --untagged_only
+    - ${{ inputs.untagged_only }}
+    - --owner_type
+    - ${{ inputs.owner_type }}

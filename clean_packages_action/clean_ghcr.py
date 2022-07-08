@@ -1,3 +1,5 @@
+import sys
+
 import requests
 import argparse
 
@@ -93,6 +95,8 @@ def str2bool(v):
 
 
 if __name__ == "__main__":
+    #print argv
+    print(sys.argv)
     parser = argparse.ArgumentParser()
     parser.add_argument('--token', type=str, required=True,
                         help="Github Personal access token with delete:packages permissions")
