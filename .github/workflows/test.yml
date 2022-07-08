@@ -27,7 +27,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           file: ./CICD/Dockerfile_temp
-          tags: ghcr.io/$REPO/temp:${{ matrix.i }}
+          tags: ghcr.io/${{ REPO }}/temp:${{ matrix.i }}
           build-args: |
             I=${{ matrix.i }}
             J=${{ matrix.j }}
