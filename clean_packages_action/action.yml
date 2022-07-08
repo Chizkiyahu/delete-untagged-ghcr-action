@@ -15,7 +15,11 @@ inputs:
     required: true
 
   repository:
-    description: 'Repository name'
+    description: 'Delete only from repository name'
+    required: false
+
+  package_name:
+    description: 'Delete only from package name'
     required: false
 
   untagged_only:
@@ -38,6 +42,8 @@ runs:
     - ${{ inputs.repository_owner }}
     - --repository
     - ${{ inputs.repository }}
+    - --package_name
+    - ${{ inputs.package_name }}
     - --untagged_only
     - ${{ inputs.untagged_only }}
     - --owner_type

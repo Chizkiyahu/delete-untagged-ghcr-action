@@ -52,15 +52,17 @@ def get_req(path, params=None):
     return result
 
 
-def get_list_packages(owner, repo_name, owner_type):
+def get_list_packages(owner, repo_name, owner_type, package_name):
     all_org_pkg = get_req(f"/{owner_type}s/{owner}/packages?package_type=container")
-    if not repo_name:
-        return all_org_pkg
-    return [pkg for pkg in all_org_pkg if pkg.get('repository') and pkg['repository']['name'] == repo_name]
+    if repo_name:
+        all_org_pkg = [pkg for pkg in all_org_pkg if pkg.get('repository') and pkg['repository']['name'] == repo_name]
+    if package_name:
+        all_org_pkg = [pkg for pkg in all_org_pkg if pkg['name'] == package_name]
+    return all_org_pkg
 
 
-def get_all_package_versions(owner, repo_name, owner_type):
-    packages = get_list_packages(owner=owner, repo_name=repo_name, owner_type=owner_type)
+def get_all_package_versions(owner, repo_name, package_name, owner_type):
+    packages = get_list_packages(owner=owner, repo_name=repo_name, package_name=package_name, owner_type=owner_type)
     return [pkg for pkg in packages for pkg in get_all_package_versions_per_pkg(pkg['url'])]
 
 
@@ -69,12 +71,14 @@ def get_all_package_versions_per_pkg(package_url):
     return get_req(url)
 
 
-def delete_pkgs(owner, repo_name, owner_type, untagged_only=True):
+def delete_pkgs(owner, repo_name, owner_type, package_name, untagged_only):
     if untagged_only:
-        packages = get_all_package_versions(owner=owner, repo_name=repo_name, owner_type=owner_type)
+        packages = get_all_package_versions(owner=owner, repo_name=repo_name,
+                                            package_name=package_name, owner_type=owner_type)
         packages = [pkg for pkg in packages if not pkg['metadata']['container']['tags']]
     else:
-        packages = get_list_packages(owner=owner, repo_name=repo_name, owner_type=owner_type)
+        packages = get_list_packages(owner=owner, repo_name=repo_name,
+                                     package_name=package_name, owner_type=owner_type)
     status = [del_req(pkg['url']).ok for pkg in packages]
     len_ok = len([ok for ok in status if ok])
     len_fail = len(status) - len_ok
@@ -94,25 +98,36 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
-if __name__ == "__main__":
+def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--token', type=str, required=True,
                         help="Github Personal access token with delete:packages permissions")
-    parser.add_argument('--repository', type=str, required=False, default="",
-                        help="Repository name")
     parser.add_argument('--repository_owner', type=str, required=True,
                         help="The repository owner name")
+    parser.add_argument('--repository', type=str, required=False, default="",
+                        help="Delete only repository name")
+    parser.add_argument('--package_name', type=str, required=False, default="",
+                        help="Delete only package name")
     parser.add_argument('--untagged_only', type=str2bool,
                         help="Delete only package versions without tag")
     parser.add_argument('--owner_type', choices=['org', 'user'], default='org',
                         help="Owner type (org or user)")
-
     args = parser.parse_args()
     if "/" in args.repository:
         repository_owner, repository = args.repository.split("/")
         if repository_owner != args.repository_owner:
             raise Exception(f"Mismatch in repository:{args.repository} and repository_owner:{args.repository_owner}")
         args.repository = repository
+    if args.package_name and args.package_name.count('/') == 3:
+        _, repo_name, package_name = args.package_name.split("/")
+        args.package_name = f"{repo_name}/{package_name}"
+    args.repository = args.repository.lower()
+    args.repository_owner = args.repository_owner.lower()
+    args.package_name = args.package_name.lower()
+    return args
 
-    delete_pkgs(owner=args.repository_owner, repo_name=args.repository,
+
+if __name__ == "__main__":
+    args = get_args()
+    delete_pkgs(owner=args.package_name.repository_owner, repo_name=args.repository, package_name=args.package_name,
                 untagged_only=args.untagged_only, owner_type=args.owner_type)
