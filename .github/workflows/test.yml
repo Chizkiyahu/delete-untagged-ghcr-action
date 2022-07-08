@@ -9,6 +9,7 @@ jobs:
       matrix:
         i: [1,2]
         j: [1,2]
+        type: ['tagged', 'untagged']
     steps:
       - uses: actions/checkout@v3
       - name: Set up Docker Buildx
@@ -30,7 +31,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           file: ./CICD/Dockerfile_temp
-          tags: ghcr.io/${{ steps.lower_case_repository.outputs.lowercase }}/temp:${{ matrix.i }}
+          tags: ghcr.io/${{ steps.lower_case_repository.outputs.lowercase }}/${{ matrix.type }}:${{ matrix.i }}
           build-args: |
             I=${{ matrix.i }}
             J=${{ matrix.j }}
@@ -48,4 +49,18 @@ jobs:
           repository_owner: ${{ github.repository_owner }}
           repository: ${{ github.repository }}
           untagged_only: true
+          owner_type: user
+
+  clean_tagged_pkgs:
+    name: clean tagged packages
+    runs-on: ubuntu-latest
+    needs: [add_temp_pkgs, clean_untagged_pkgs]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./clean_packages_action
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          repository_owner: ${{ github.repository_owner }}
+          repository: ${{ github.repository }}
+          untagged_only: false
           owner_type: user
