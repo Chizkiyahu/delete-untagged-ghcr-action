@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        i: [1] #[1,2,3,4,5]
+        i: [1,2]
         j: [1,2]
     steps:
       - uses: actions/checkout@v3
@@ -36,16 +36,16 @@ jobs:
             J=${{ matrix.j }}
           push: true
 
-#  clean_untagged_pkgs:
-#    name: clean untagged packages
-#    runs-on: ubuntu-latest
-#    needs: add_temp_pkgs
-#    steps:
-#      - uses: actions/checkout@v3
-#      - uses: ./clean_packages_action
-#        with:
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#          repository_owner: ${{ github.repository_owner }}
-#          repository: ${{ github.repository }}
-#          untagged_only: true
-#          owner_type: user
+  clean_untagged_pkgs:
+    name: clean untagged packages
+    runs-on: ubuntu-latest
+    needs: add_temp_pkgs
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./clean_packages_action
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          repository_owner: ${{ github.repository_owner }}
+          repository: ${{ github.repository }}
+          untagged_only: true
+          owner_type: user
