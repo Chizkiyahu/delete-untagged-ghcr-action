@@ -10,9 +10,10 @@ jobs:
         i: [1,2,3,4,5]
         j: [1,2]
     steps:
-      - name: downcase REPO
-        run: |
-          echo "REPO=${{ github.repository }}" >> ${GITHUB_ENV}
+      - name: lower case repository
+        uses: ASzc/change-string-case-action@v1
+        with:
+          string: ${{ github.repository }}
       - uses: actions/checkout@v3
       - name: Set up Docker Buildx
         id: buildx
@@ -27,7 +28,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           file: ./CICD/Dockerfile_temp
-          tags: ghcr.io/${{ REPO }}/temp:${{ matrix.i }}
+          tags: ghcr.io/${{ steps.string.outputs.lowercase }}/temp:${{ matrix.i }}
           build-args: |
             I=${{ matrix.i }}
             J=${{ matrix.j }}
