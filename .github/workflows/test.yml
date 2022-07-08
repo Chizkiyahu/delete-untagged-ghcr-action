@@ -7,13 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        i: [1,2,3,4,5]
+        i: [1] #[1,2,3,4,5]
         j: [1,2]
     steps:
-      - name: lower case repository
-        uses: ASzc/change-string-case-action@v1
-        with:
-          string: ${{ github.repository }}
       - uses: actions/checkout@v3
       - name: Set up Docker Buildx
         id: buildx
@@ -24,11 +20,17 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: lower case repository
+        id: lower_case_repository
+        uses: ASzc/change-string-case-action@v2
+        with:
+          string: ${{ github.repository }}
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
           file: ./CICD/Dockerfile_temp
-          tags: ghcr.io/${{ steps.string.outputs.lowercase }}/temp:${{ matrix.i }}
+          tags: ghcr.io/${{ steps.lower_case_repository.outputs.lowercase }}/temp:${{ matrix.i }}
           build-args: |
             I=${{ matrix.i }}
             J=${{ matrix.j }}
