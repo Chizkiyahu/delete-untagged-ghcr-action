@@ -1,4 +1,6 @@
 FROM python:latest
+RUN pip install pip --upgrade
+RUN pip install requests
 WORKDIR /app
-COPY clean_ghcr.py .
-ENTRYPOINT ["python clean_ghcr.py"]
+ADD clean_ghcr.py /app/clean_ghcr.py
+ENTRYPOINT ["python", "/app/clean_ghcr.py"]
