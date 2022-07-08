@@ -34,6 +34,7 @@ jobs:
           build-args: |
             I=${{ matrix.i }}
             J=${{ matrix.j }}
+          push: true
 
 #  clean_untagged_pkgs:
 #    name: clean untagged packages
