@@ -1,0 +1,39 @@
+name: 'clean_packages'
+description: 'Clean Github packages '
+inputs:  
+  token:
+    description: >
+      Personal access token (PAT) used to fetch the repository. The PAT is configured
+      with the local git config, which enables your scripts to run authenticated git
+      commands. The post-job step removes the PAT.
+      needs delete:packages permissions
+    required: true
+ 
+  repository_owner:
+    description: 'The repository owner name'
+    default: ${{ github.repository_owner }}
+    required: true
+
+  repository:
+    description: 'Repository name'
+    required: false
+
+  untagged_only:
+      description: 'Delete only package versions without tag'
+      default: true
+  
+  owner_type:
+      description : "Owner type (org or user)"
+      required: true
+
+
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - --token ${{ inputs.token }}
+    - --repository_owner ${{ inputs.repository_owner }}
+    - --repository ${{ inputs.repository }}
+    - --untagged_only ${{ inputs.untagged_only }}
+    - --owner_type ${{ inputs.owner_type }}

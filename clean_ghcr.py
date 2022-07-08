@@ -1,0 +1,116 @@
+import requests
+import argparse
+
+API_ENDPOINT = "https://api.github.com"
+PER_PAGE = 100  # max 100 defaults 30
+
+
+def get_url(path):
+    if path.startswith(API_ENDPOINT):
+        return path
+    return f"{API_ENDPOINT}{path}"
+
+
+def get_base_headers():
+    return {
+        "Authorization": "token {}".format(args.token),
+        "Accept": "application/vnd.github.v3+json",
+    }
+
+
+def del_req(path):
+    res = requests.delete(get_url(path), headers=get_base_headers())
+    if res.ok:
+        print(f"Deleted {path}")
+    else:
+        print(res.text)
+    return res
+
+
+def get_req(path, params=None):
+    if params is None:
+        params = {}
+    params.update(page=1)
+    if "per_page" not in params:
+        params["per_page"] = PER_PAGE
+    url = get_url(path)
+    another_page = True
+    result = []
+    while another_page:
+        response = requests.get(url, headers=get_base_headers(), params=params)
+        if not response.ok:
+            raise Exception(response.text)
+        result.extend(response.json())
+        if 'next' in response.links:
+            url = response.links['next']['url']
+            if 'page' in params:
+                del params['page']
+        else:
+            another_page = False
+    return result
+
+
+def get_list_packages(owner, repo_name, owner_type):
+    all_org_pkg = get_req(f"/{owner_type}s/{owner}/packages?package_type=container")
+    if not repo_name:
+        return all_org_pkg
+    return [pkg for pkg in all_org_pkg if pkg.get('repository') and pkg['repository']['name'] == repo_name]
+
+
+def get_all_package_versions(owner, repo_name, owner_type):
+    packages = get_list_packages(owner=owner, repo_name=repo_name, owner_type=owner_type)
+    return [pkg for pkg in packages for pkg in get_all_package_versions_per_pkg(pkg['url'])]
+
+
+def get_all_package_versions_per_pkg(package_url):
+    url = f"{package_url}/versions"
+    return get_req(url)
+
+
+def delete_pkgs(owner, repo_name, owner_type, untagged_only=True):
+    if untagged_only:
+        packages = get_all_package_versions(owner=owner, repo_name=repo_name, owner_type=owner_type)
+        packages = [pkg for pkg in packages if not pkg['metadata']['container']['tags']]
+    else:
+        packages = get_list_packages(owner=owner, repo_name=repo_name, owner_type=owner_type)
+    status = [del_req(pkg['url']).ok for pkg in packages]
+    len_ok = len([ok for ok in status if ok])
+    len_fail = len(status) - len_ok
+    print(f"Deleted {len_ok} package")
+    if len_fail > 0:
+        raise Exception(f"fail delete {len_fail}")
+
+
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--token', type=str, required=True,
+                        help="Github Personal access token with delete:packages permissions")
+    parser.add_argument('--repository', type=str, required=False, default="",
+                        help="Repository name")
+    parser.add_argument('--repository_owner', type=str, required=True,
+                        help="The repository owner name")
+    parser.add_argument('--untagged_only', type=str2bool,
+                        help="Delete only package versions without tag")
+    parser.add_argument('--owner_type', choices=['org', 'user'], default='org',
+                        help="Owner type (org or user)")
+
+    args = parser.parse_args()
+    if "/" in args.repository:
+        repository_owner, repository = args.repository.split("/")
+        if repository_owner != args.repository_owner:
+            raise Exception(f"Mismatch in repository:{args.repository} and repository_owner:{args.repository_owner}")
+        args.repository = repository
+
+    delete_pkgs(owner=args.repository_owner, repo_name=args.repository,
+                untagged_only=args.untagged_only, owner_type=args.owner_type)
