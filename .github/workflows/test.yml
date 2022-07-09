@@ -42,7 +42,7 @@ jobs:
     needs: add_temp_pkgs
     steps:
       - uses: actions/checkout@v3
-      - uses: ./clean_packages_action
+      - uses: ./
         with:
           token: ${{ secrets.PAT_TOKEN }}
           repository_owner: ${{ github.repository_owner }}
@@ -56,7 +56,7 @@ jobs:
     needs: clean_untagged_pkgs
     steps:
       - uses: actions/checkout@v3
-      - uses: ./clean_packages_action
+      - uses: ./
         with:
           token: ${{ secrets.PAT_TOKEN }}
           repository_owner: ${{ github.repository_owner }}
@@ -71,7 +71,7 @@ jobs:
     needs: delete_package
     steps:
       - uses: actions/checkout@v3
-      - uses: ./clean_packages_action
+      - uses: ./
         with:
           token: ${{ secrets.PAT_TOKEN }}
           repository_owner: ${{ github.repository_owner }}
