@@ -68,7 +68,7 @@ jobs:
   clean_repo:
     name: delete all package in repo
     runs-on: ubuntu-latest
-    needs: clean_untagged_pkgs
+    needs: delete_package
     steps:
       - uses: actions/checkout@v3
       - uses: ./clean_packages_action
