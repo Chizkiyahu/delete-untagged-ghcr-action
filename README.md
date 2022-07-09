@@ -1,4 +1,4 @@
-# delete-untagged-ghcr_action
+# delete-untagged-ghcr-action
 Action for delete containers from Github container registry 
 
 delete untagged ghcr containers in a repository
