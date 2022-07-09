@@ -1,4 +1,3 @@
 FROM alpine:latest
 ARG I
-ARG J
-RUN echo $I_$J
+RUN echo $I
