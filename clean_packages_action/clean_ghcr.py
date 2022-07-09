@@ -118,9 +118,10 @@ def get_args():
         if repository_owner != args.repository_owner:
             raise Exception(f"Mismatch in repository:{args.repository} and repository_owner:{args.repository_owner}")
         args.repository = repository
-    if args.package_name and args.package_name.count('/') == 3:
+    if args.package_name and args.package_name.count('/') == 2:
         _, repo_name, package_name = args.package_name.split("/")
-        args.package_name = f"{repo_name}/{package_name}"
+        package_name = f"{repo_name}/{package_name}"
+        args.package_name = package_name
     args.repository = args.repository.lower()
     args.repository_owner = args.repository_owner.lower()
     args.package_name = args.package_name.lower()
@@ -129,5 +130,5 @@ def get_args():
 
 if __name__ == "__main__":
     args = get_args()
-    delete_pkgs(owner=args.package_name.repository_owner, repo_name=args.repository, package_name=args.package_name,
+    delete_pkgs(owner=args.repository_owner, repo_name=args.repository, package_name=args.package_name,
                 untagged_only=args.untagged_only, owner_type=args.owner_type)
