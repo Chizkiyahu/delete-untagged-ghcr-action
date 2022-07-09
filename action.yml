@@ -1,5 +1,9 @@
-name: 'clean_packages'
-description: 'Clean Github packages '
+name: 'Delete untagged ghcr'
+author: 'Chuzkiyahu Raful'
+description: 'Delete containers on github container registry without tags'
+branding:
+  icon: 'trash-2'
+  color: 'blue'
 inputs:  
   token:
     description: >
