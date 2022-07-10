@@ -16,7 +16,7 @@ jobs:
           python-version: '3.9'
           cache: 'pip'
       - name: install and run yapf
-      - run: |
+        run: |
           pip install yapf
           yapf  . --verbose --recursive --in-place --parallel
           is_formatted=$(echo $?)
