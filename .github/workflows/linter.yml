@@ -21,7 +21,7 @@ jobs:
           pip install yapf
           yapf  . --verbose --recursive --in-place --parallel
           is_formatted=$(echo $?)
-          echo '::set-output name=IS_FORMATTED::${{ echo $? }}'
+          echo '::set-output name=IS_FORMATTED::${{ $? }}'
       - name: Create Pull Request
         if: ${{ steps.yapf.outputs.IS_FORMATTED }} != 0
         uses: peter-evans/create-pull-request@v4
