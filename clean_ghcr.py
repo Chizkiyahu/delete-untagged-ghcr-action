@@ -9,6 +9,8 @@ def get_url(path):
     if path.startswith(API_ENDPOINT):
         return path
     return f"{API_ENDPOINT}{path}"
+
+
 def get_base_headers():
     return {
         "Authorization": "token {}".format(args.token),
