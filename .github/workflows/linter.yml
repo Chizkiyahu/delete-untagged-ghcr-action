@@ -1,0 +1,38 @@
+name: yapf-action
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  yapf:
+    name: runner / yapf
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - run: pip install yapf
+      - name: run yapf
+        id: yapf
+        run: |
+          yapf  . --verbose --recursive --in-place --parallel
+          is_formatted=$(echo $?)
+          echo '::set-output name=IS_FORMATTED::$?'
+      - name: Create Pull Request
+        if: ${{ steps.yapf.outputs.IS_FORMATTED }} != 0
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "Bot action yapf on branch - ${{ github.head_ref }}"
+          commit-message: ":art: Format Python code with yapf"
+          body: |
+            There appear to be some python formatting errors in ${{ github.sha }}. This pull request
+            uses the yapf formatter to fix these issues.
+          base: ${{ github.head_ref }} # Creates pull request onto pull request or commit branch
+          branch: ${{ github.head_ref }}_actions_yapf
+      - name: Fail if need to format
+        if: ${{ steps.yapf.outputs.IS_FORMATTED }} != 0
+        run: exit 1
