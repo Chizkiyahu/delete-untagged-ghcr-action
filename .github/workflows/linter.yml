@@ -27,11 +27,11 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: "${{ github.head_ref }} Format Python code with psf/black push"
-          commit-message: ":art: Format Python code with psf/black"
+          title: "Bot action yapf on branch - ${{ github.head_ref }}"
+          commit-message: ":art: Format Python code with yapf"
           body: |
             There appear to be some python formatting errors in ${{ github.sha }}. This pull request
-            uses the  formatter to fix these issues.
+            uses the yapf formatter to fix these issues.
           base: ${{ github.head_ref }} # Creates pull request onto pull request or commit branch
           branch: ${{ github.head_ref }}_actions_yapf
       - name: Fail if need to format
