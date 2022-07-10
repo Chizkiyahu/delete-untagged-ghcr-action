@@ -1,4 +1,4 @@
-name: test clean action
+name: tests
 on: push
 
 jobs:

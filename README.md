@@ -1,4 +1,6 @@
 # delete-untagged-ghcr-action V1
+[![test](https://github.com/Chizkiyahu/delete-untagged-ghcr-action/actions/workflows/test.yml/badge.svg)](https://github.com/Chizkiyahu/delete-untagged-ghcr-action/actions/workflows/test.yml)
+
 Action for delete containers from Github container registry 
 
 delete untagged ghcr containers in a repository
