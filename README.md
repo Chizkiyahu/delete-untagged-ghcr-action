@@ -1,4 +1,5 @@
 # delete-untagged-ghcr-action V1
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/7fcfbad46c8540399f58562a4851b9e0)](https://app.codacy.com/gh/Chizkiyahu/delete-untagged-ghcr-action?utm_source=github.com&utm_medium=referral&utm_content=Chizkiyahu/delete-untagged-ghcr-action&utm_campaign=Badge_Grade_Settings)
 [![test](https://github.com/Chizkiyahu/delete-untagged-ghcr-action/actions/workflows/test.yml/badge.svg)](https://github.com/Chizkiyahu/delete-untagged-ghcr-action/actions/workflows/test.yml)
 
 Action for delete containers from Github container registry 
