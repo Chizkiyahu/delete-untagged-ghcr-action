@@ -16,8 +16,6 @@ def get_base_headers():
         "Authorization": "token {}".format(args.token),
         "Accept": "application/vnd.github.v3+json",
     }
-
-
 def del_req(path):
     res = requests.delete(get_url(path), headers=get_base_headers())
     if res.ok:
