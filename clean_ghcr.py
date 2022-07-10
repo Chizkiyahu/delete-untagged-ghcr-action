@@ -1,5 +1,3 @@
-import sys
-
 import requests
 import argparse
 

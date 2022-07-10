@@ -4,7 +4,7 @@
 Action for delete containers from Github container registry 
 
 delete untagged ghcr containers in a repository
-# Usage
+## Usage
 
 <!-- start usage -->
 ```yaml
@@ -42,15 +42,14 @@ delete untagged ghcr containers in a repository
 ```
 <!-- end usage -->
 
-# Scenarios
+## Scenarios
 
-
-- [Delete all owner containers without tags](#delete-all-owner-containers-without-tags)
-- [Delete all owner containers](#delete-all-owner-containers)
-- [Delete all containers from repository without tags](#delete-all-containers-from-repository-without-tags)
-- [Delete all containers from repository](#delete-all-containers-from-repository)
-- [Delete all containers from package without tags](#delete-all-containers-from-package-without-tags)
-- [Delete all containers from package](#delete-all-containers-from-package)
+  - [Delete all owner containers without tags](#delete-all-owner-containers-without-tags)
+  - [Delete all owner containers](#delete-all-owner-containers)
+  - [Delete all containers from repository without tags](#delete-all-containers-from-repository-without-tags)
+  - [Delete all containers from repository](#delete-all-containers-from-repository)
+  - [Delete all containers from package without tags](#delete-all-containers-from-package-without-tags)
+  - [Delete all containers from package](#delete-all-containers-from-package)
 
 ## Delete all owner containers without tags
 ```yaml
