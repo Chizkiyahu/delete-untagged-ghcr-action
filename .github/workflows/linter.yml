@@ -6,7 +6,7 @@ on:
     branches: [ main ]
 
 jobs:
-  linter_name:
+  yapf:
     name: runner / yapf
     runs-on: ubuntu-latest
     steps:
@@ -14,7 +14,6 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-          cache: 'pip'
       - run: pip install yapf
       - name: run yapf
         id: yapf
