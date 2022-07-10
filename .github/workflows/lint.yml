@@ -1,4 +1,4 @@
-name: black-action
+name: yapf-action
 on:
   push:
     branches: [ main ]
@@ -7,17 +7,22 @@ on:
 
 jobs:
   linter_name:
-    name: runner / black
+    name: runner / yapf
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Check files using the black formatter
-        uses: rickstaa/action-black@v1
-        id: action_black
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          black_args: "."
+          python-version: '3.9'
+          cache: 'pip'
+      - name: install and run yapf
+      - run: |
+          pip install yapf
+          yapf  . --verbose --recursive --in-place --parallel
+          is_formatted=$(echo $?)
+      
       - name: Create Pull Request
-        if: steps.action_black.outputs.is_formatted == 'true'
+        if: $is_formatted != 0
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -25,9 +30,9 @@ jobs:
           commit-message: ":art: Format Python code with psf/black"
           body: |
             There appear to be some python formatting errors in ${{ github.sha }}. This pull request
-            uses the [psf/black](https://github.com/psf/black) formatter to fix these issues.
+            uses the  formatter to fix these issues.
           base: ${{ github.head_ref }} # Creates pull request onto pull request or commit branch
-          branch: ${{ github.head_ref }}_actions/black
+          branch: ${{ github.head_ref }}_actions_yapf
       - name: Fail if need to format
-        if: steps.action_black.outputs.is_formatted == 'true'
+        if: $is_formatted != 0
         run: exit 1
