@@ -21,7 +21,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: "Format Python code with psf/black push"
+          title: "${{ github.head_ref }} Format Python code with psf/black push"
           commit-message: ":art: Format Python code with psf/black"
           body: |
             There appear to be some python formatting errors in ${{ github.sha }}. This pull request
