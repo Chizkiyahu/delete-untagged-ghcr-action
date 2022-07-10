@@ -9,8 +9,6 @@ def get_url(path):
     if path.startswith(API_ENDPOINT):
         return path
     return f"{API_ENDPOINT}{path}"
-
-
 def get_base_headers():
     return {
         "Authorization": "token {}".format(args.token),
@@ -19,7 +17,7 @@ def get_base_headers():
 
 
 def del_req(path):
-    res = requests.delete(get_url(path), headers=get_base_headers())
+    res = requests.delete(get_url(path),headers=get_base_headers())
     if res.ok:
         print(f"Deleted {path}")
     else:
