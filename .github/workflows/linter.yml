@@ -16,13 +16,14 @@ jobs:
           python-version: '3.9'
           cache: 'pip'
       - name: install and run yapf
+        id: yapf
         run: |
           pip install yapf
           yapf  . --verbose --recursive --in-place --parallel
           is_formatted=$(echo $?)
-      
+          echo '::set-output name=IS_FORMATTED::${{ echo $? }}'
       - name: Create Pull Request
-        if: $is_formatted != 0
+        if: ${{ steps.yapf.outputs.IS_FORMATTED }} != 0
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -34,5 +35,5 @@ jobs:
           base: ${{ github.head_ref }} # Creates pull request onto pull request or commit branch
           branch: ${{ github.head_ref }}_actions_yapf
       - name: Fail if need to format
-        if: $is_formatted != 0
+        if: ${{ steps.yapf.outputs.IS_FORMATTED }} != 0
         run: exit 1
