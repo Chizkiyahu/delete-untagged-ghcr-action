@@ -9,6 +9,8 @@ def get_url(path):
     if path.startswith(API_ENDPOINT):
         return path
     return f"{API_ENDPOINT}{path}"
+
+
 def get_base_headers():
     return {
         "Authorization": "token {}".format(args.token),
@@ -17,7 +19,7 @@ def get_base_headers():
 
 
 def del_req(path):
-    res = requests.delete(get_url(path),headers=get_base_headers())
+    res = requests.delete(get_url(path), headers=get_base_headers())
     if res.ok:
         print(f"Deleted {path}")
     else:
@@ -49,15 +51,17 @@ def get_req(path, params=None):
 
 
 def get_list_packages(owner, repo_name, owner_type, package_name):
-    all_org_pkg = get_req(f"/{owner_type}s/{owner}/packages?package_type=container")
+    all_org_pkg = get_req(
+        f"/{owner_type}s/{owner}/packages?package_type=container")
     if repo_name:
         all_org_pkg = [
-            pkg
-            for pkg in all_org_pkg
+            pkg for pkg in all_org_pkg
             if pkg.get("repository") and pkg["repository"]["name"] == repo_name
         ]
     if package_name:
-        all_org_pkg = [pkg for pkg in all_org_pkg if pkg["name"] == package_name]
+        all_org_pkg = [
+            pkg for pkg in all_org_pkg if pkg["name"] == package_name
+        ]
     return all_org_pkg
 
 
@@ -69,7 +73,8 @@ def get_all_package_versions(owner, repo_name, package_name, owner_type):
         owner_type=owner_type,
     )
     return [
-        pkg for pkg in packages for pkg in get_all_package_versions_per_pkg(pkg["url"])
+        pkg for pkg in packages
+        for pkg in get_all_package_versions_per_pkg(pkg["url"])
     ]
 
 
@@ -86,7 +91,9 @@ def delete_pkgs(owner, repo_name, owner_type, package_name, untagged_only):
             package_name=package_name,
             owner_type=owner_type,
         )
-        packages = [pkg for pkg in packages if not pkg["metadata"]["container"]["tags"]]
+        packages = [
+            pkg for pkg in packages if not pkg["metadata"]["container"]["tags"]
+        ]
     else:
         packages = get_list_packages(
             owner=owner,
@@ -121,9 +128,10 @@ def get_args():
         required=True,
         help="Github Personal access token with delete:packages permissions",
     )
-    parser.add_argument(
-        "--repository_owner", type=str, required=True, help="The repository owner name"
-    )
+    parser.add_argument("--repository_owner",
+                        type=str,
+                        required=True,
+                        help="The repository owner name")
     parser.add_argument(
         "--repository",
         type=str,
