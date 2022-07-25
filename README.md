@@ -121,3 +121,5 @@ delete all / untagged ghcr containers in a repository
         untagged_only: false
         owner_type: org # or user
 ```
+
+
