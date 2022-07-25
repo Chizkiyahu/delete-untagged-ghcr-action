@@ -1,0 +1,23 @@
+
+name: Merge PR
+on:
+  pull_request:
+    types: labeled
+
+jobs:
+  merge_pr:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.label.name == 'merge_immediately' }}
+    steps:
+      - name: Approve PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.html_url }}
+
+        run: |
+          echo ${{ github.event.label.name }}
+          gh auth status
+          echo "Approving PR"
+          gh pr review $PR -a
+          gh pr merge $PR -m --admin 
+          echo "PR approved"
