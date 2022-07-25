@@ -34,5 +34,4 @@ jobs:
           base: ${{ github.head_ref }} # Creates pull request onto pull request or commit branch
           branch: ${{ github.head_ref }}_actions_yapf
       - name: Fail if need to format
-        if: ${{ steps.yapf.outputs.IS_FORMATTED }} != 0
-        run: exit 1
+        run: exit ${{ steps.yapf.outputs.IS_FORMATTED }}
