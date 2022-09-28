@@ -35,6 +35,10 @@ delete all / untagged ghcr containers in a repository
     # Default: true
     # choices: true, false
     untagged_only: true
+    # Except untagged multiplatform packages from deletion 
+    # only for untagged_only=true
+    # needs docker installed
+    except_untagged_multiplatform: false
     # the owner type
     # required: true
     # choices: org, user
@@ -82,7 +86,23 @@ delete all / untagged ghcr containers in a repository
         repository: ${{ github.repository }}
         untagged_only: true
         owner_type: org # or user
+
 ```
+
+## Delete all containers from repository without tags except untagged multiplatform packages
+```yaml
+- name: Delete all containers from repository without tags
+    uses: Chizkiyahu/delete-untagged-ghcr-action@v1
+    with:
+        token: ${{ secrets.PAT_TOKEN }}
+        repository_owner: ${{ github.repository_owner }}
+        repository: ${{ github.repository }}
+        untagged_only: true
+        owner_type: org # or user
+        except_untagged_multiplatform: true
+
+```
+
 
 ## Delete all containers from repository 
 ```yaml
@@ -107,6 +127,20 @@ delete all / untagged ghcr containers in a repository
         package_name: the-package-name
         untagged_only: true
         owner_type: org # or user
+```
+
+## Delete all containers from package without tags except untagged multiplatform packages
+```yaml
+- name: Delete all containers from package without tags
+    uses: Chizkiyahu/delete-untagged-ghcr-action@v1
+    with:
+        token: ${{ secrets.PAT_TOKEN }}
+        repository_owner: ${{ github.repository_owner }}
+        repository: ${{ github.repository }}
+        package_name: the-package-name
+        untagged_only: true
+        owner_type: org # or user
+        except_untagged_multiplatform: true
 ```
 
 ## Delete all containers from package 

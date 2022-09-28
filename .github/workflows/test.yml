@@ -70,8 +70,10 @@ jobs:
           build-args: |
             I=${{ matrix.i }}
           push: true
+          platforms: linux/amd64,linux/arm64
 
-  clean_untagged_pkgs:
+
+  clean_untagged_pkgs1:
     name: clean untagged packages
     runs-on: ubuntu-latest
     needs: add_temp_pkgs2
@@ -84,11 +86,27 @@ jobs:
           repository: ${{ github.repository }}
           untagged_only: true
           owner_type: user
+          except_untagged_multiplatform: true
+
+  clean_untagged_pkgs2:
+    name: clean untagged packages
+    runs-on: ubuntu-latest
+    needs:   clean_untagged_pkgs1
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          repository_owner: ${{ github.repository_owner }}
+          repository: ${{ github.repository }}
+          untagged_only: true
+          owner_type: user
+          except_untagged_multiplatform: false
 
   delete_package:
     name: delete package
     runs-on: ubuntu-latest
-    needs: clean_untagged_pkgs
+    needs: clean_untagged_pkgs2
     steps:
       - uses: actions/checkout@v3
       - uses: ./
