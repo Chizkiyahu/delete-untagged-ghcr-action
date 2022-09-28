@@ -29,6 +29,10 @@ inputs:
   untagged_only:
       description: 'Delete only package versions without tag'
       default: true
+
+  except_untagged_multiplatform:
+    description: 'Except untagged multiplatform packages from deletion (only for --untagged_only)'
+    default: true
   
   owner_type:
       description : "Owner type (org or user)"
@@ -37,18 +41,21 @@ inputs:
 
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - --token
-    - ${{ inputs.token }}
-    - --repository_owner
-    - ${{ inputs.repository_owner }}
-    - --repository
-    - ${{ inputs.repository }}
-    - --package_name
-    - ${{ inputs.package_name }}
-    - --untagged_only
-    - ${{ inputs.untagged_only }}
-    - --owner_type
-    - ${{ inputs.owner_type }}
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        cache: 'pip' # caching pip dependencies
+    - run: pip install -r ${{ github.action_path }}/requirements.txt
+      shell: bash
+    - run: | 
+         python ${{ github.action_path }}/clean_ghcr.py \
+        --token ${{ inputs.token }} \
+        --repository_owner ${{ inputs.repository_owner }} \
+        --repository ${{ inputs.repository }} \
+        --package_name ${{ inputs.package_name }} \ 
+        --untagged_only ${{ inputs.untagged_only }} \
+        --except_untagged_multiplatform ${{ inputs.except_untagged_multiplatform }} \
+        --owner_type ${{ inputs.owner_type }}
+      shell: bash

@@ -1,8 +1,12 @@
+import json
+import subprocess
+
 import requests
 import argparse
 
 API_ENDPOINT = "https://api.github.com"
 PER_PAGE = 100  # max 100 defaults 30
+DOCKER_ENDPOINT = "ghcr.io/"
 
 
 def get_url(path):
@@ -83,16 +87,45 @@ def get_all_package_versions_per_pkg(package_url):
     return get_req(url)
 
 
-def delete_pkgs(owner, repo_name, owner_type, package_name, untagged_only):
+def get_deps_pkgs(owner, package_name, pkgs):
+    ids = []
+    for pkg in pkgs:
+        image = f"{DOCKER_ENDPOINT}{owner}/{package_name}@{pkg['name']}"
+        ids.extend(get_image_deps(image))
+    return ids
+
+
+def get_image_deps(image):
+    manifest_txt = get_manifest(image)
+    data = json.loads(manifest_txt)
+    return [manifest['digest'] for manifest in data.get("manifests", [])]
+
+
+def get_manifest(image):
+    cmd = f"docker manifest inspect {image}"
+    res = subprocess.run(cmd, shell=True, capture_output=True)
+    if res.returncode != 0:
+        raise Exception(res.stderr)
+    return res.stdout.decode("utf-8")
+
+
+def delete_pkgs(owner, repo_name, owner_type, package_name, untagged_only, except_untagged_multiplatform):
     if untagged_only:
-        packages = get_all_package_versions(
+        all_packages = get_all_package_versions(
             owner=owner,
             repo_name=repo_name,
             package_name=package_name,
             owner_type=owner_type,
         )
+        tagged_pkgs = [
+            pkg for pkg in all_packages if pkg["metadata"]["container"]["tags"]
+        ]
+        if except_untagged_multiplatform:
+            deps_pkgs = get_deps_pkgs(owner, package_name, tagged_pkgs)
+        else:
+            deps_pkgs = []
         packages = [
-            pkg for pkg in packages if not pkg["metadata"]["container"]["tags"]
+            pkg for pkg in all_packages if not pkg["metadata"]["container"]["tags"] and pkg["name"] not in deps_pkgs
         ]
     else:
         packages = get_list_packages(
@@ -157,6 +190,11 @@ def get_args():
         default="org",
         help="Owner type (org or user)",
     )
+    parser.add_argument(
+        "--except-untagged-multiplatform",
+        type=str2bool,
+        help="Except untagged multiplatform packages from deletion (only for --untagged_only) needs docker installed",
+    )
     args = parser.parse_args()
     if "/" in args.repository:
         repository_owner, repository = args.repository.split("/")
@@ -183,4 +221,5 @@ if __name__ == "__main__":
         package_name=args.package_name,
         untagged_only=args.untagged_only,
         owner_type=args.owner_type,
+        except_untagged_multiplatform=args.except_untagged_multiplatform
     )
