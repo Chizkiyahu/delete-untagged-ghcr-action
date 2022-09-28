@@ -134,9 +134,6 @@ def delete_pkgs(owner, repo_name, owner_type, package_name, untagged_only,
         all_packages = [
             pkg_ver for pkg in all_packages for pkg_ver in all_packages[pkg]
         ]
-        print(f"all_packages: {all_packages}")
-        print(f"tagged_pkgs: {tagged_pkgs}")
-        print(f"deps_pkgs: {deps_pkgs}")
         packages = [
             pkg for pkg in all_packages
             if not pkg["metadata"]["container"]["tags"]
