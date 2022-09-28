@@ -109,7 +109,8 @@ def get_manifest(image):
     return res.stdout.decode("utf-8")
 
 
-def delete_pkgs(owner, repo_name, owner_type, package_name, untagged_only, except_untagged_multiplatform):
+def delete_pkgs(owner, repo_name, owner_type, package_name, untagged_only,
+                except_untagged_multiplatform):
     if untagged_only:
         all_packages = get_all_package_versions(
             owner=owner,
@@ -125,7 +126,9 @@ def delete_pkgs(owner, repo_name, owner_type, package_name, untagged_only, excep
         else:
             deps_pkgs = []
         packages = [
-            pkg for pkg in all_packages if not pkg["metadata"]["container"]["tags"] and pkg["name"] not in deps_pkgs
+            pkg for pkg in all_packages
+            if not pkg["metadata"]["container"]["tags"]
+            and pkg["name"] not in deps_pkgs
         ]
     else:
         packages = get_list_packages(
@@ -193,7 +196,8 @@ def get_args():
     parser.add_argument(
         "--except-untagged-multiplatform",
         type=str2bool,
-        help="Except untagged multiplatform packages from deletion (only for --untagged_only) needs docker installed",
+        help=
+        "Except untagged multiplatform packages from deletion (only for --untagged_only) needs docker installed",
     )
     args = parser.parse_args()
     if "/" in args.repository:
@@ -221,5 +225,4 @@ if __name__ == "__main__":
         package_name=args.package_name,
         untagged_only=args.untagged_only,
         owner_type=args.owner_type,
-        except_untagged_multiplatform=args.except_untagged_multiplatform
-    )
+        except_untagged_multiplatform=args.except_untagged_multiplatform)
