@@ -60,7 +60,7 @@ def get_list_packages(owner, repo_name, owner_type, package_name):
     if repo_name:
         all_org_pkg = [
             pkg for pkg in all_org_pkg
-            if pkg.get("repository") and pkg["repository"]["name"] == repo_name
+            if pkg.get("repository") and pkg["repository"]["name"].lower() == repo_name
         ]
     if package_name:
         all_org_pkg = [
