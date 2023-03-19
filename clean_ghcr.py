@@ -59,8 +59,8 @@ def get_list_packages(owner, repo_name, owner_type, package_name):
         f"/{owner_type}s/{owner}/packages?package_type=container")
     if repo_name:
         all_org_pkg = [
-            pkg for pkg in all_org_pkg
-            if pkg.get("repository") and pkg["repository"]["name"].lower() == repo_name
+            pkg for pkg in all_org_pkg if pkg.get("repository")
+            and pkg["repository"]["name"].lower() == repo_name
         ]
     if package_name:
         all_org_pkg = [
