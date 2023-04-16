@@ -1,12 +1,11 @@
 import json
-import subprocess
-
 import requests
 import argparse
+from dxf import DXF
 
 API_ENDPOINT = "https://api.github.com"
 PER_PAGE = 100  # max 100 defaults 30
-DOCKER_ENDPOINT = "ghcr.io/"
+DOCKER_ENDPOINT = "ghcr.io"
 
 
 def get_url(path):
@@ -89,26 +88,25 @@ def get_all_package_versions_per_pkg(package_url):
 
 def get_deps_pkgs(owner, pkgs):
     ids = []
-    for pkg in pkgs:
-        for pkg_ver in pkgs[pkg]:
-            image = f"{DOCKER_ENDPOINT}{owner}/{pkg}@{pkg_ver['name']}"
-            ids.extend(get_image_deps(image))
+    for pkg_name, pkg_versions in pkgs.items():
+        registry = get_registry(owner, pkg_name)
+        for pkg_ver in pkg_versions:
+            manifest_txt = registry.get_manifest(pkg_ver['name'])
+            ids.extend(get_image_deps(manifest_txt))
     return ids
 
 
-def get_image_deps(image):
-    manifest_txt = get_manifest(image)
+def get_registry(owner, pkg_name):
+    return DXF(
+        DOCKER_ENDPOINT,
+        repo=f"{owner}/{pkg_name}",
+        auth=lambda dxf, resp: dxf.authenticate(owner, args.token, response=resp)
+    )
+
+
+def get_image_deps(manifest_txt):
     data = json.loads(manifest_txt)
     return [manifest['digest'] for manifest in data.get("manifests", [])]
-
-
-def get_manifest(image):
-    cmd = f"docker manifest inspect {image}"
-    res = subprocess.run(cmd, shell=True, capture_output=True)
-    if res.returncode != 0:
-        print(cmd)
-        raise Exception(res.stderr)
-    return res.stdout.decode("utf-8")
 
 
 def delete_pkgs(owner, repo_name, owner_type, package_name, untagged_only,
