@@ -57,8 +57,10 @@ def get_req(path, params=None):
 def get_list_packages(owner, repo_name, owner_type, package_name):
     if package_name:
         return [{
-            "name": package_name,
-            "url": f"/{owner_type}s/{owner}/packages/container/{package_name}",
+            "name":
+            package_name,
+            "url":
+            f"/{owner_type}s/{owner}/packages/container/{package_name}",
         }]
 
     all_org_pkg = get_req(
