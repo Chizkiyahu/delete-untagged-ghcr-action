@@ -54,16 +54,22 @@ def get_req(path, params=None):
 
 
 def get_list_packages(owner, repo_name, owner_type, package_name):
+    if package_name:
+        url = get_url(
+            f"/{owner_type}s/{owner}/packages/container/{package_name}")
+        response = requests.get(url, headers=get_base_headers())
+        if not response.ok:
+            if response.status_code == 404:
+                return []
+            raise Exception(response.text)
+        return [response.json()]
+
     all_org_pkg = get_req(
         f"/{owner_type}s/{owner}/packages?package_type=container")
     if repo_name:
         all_org_pkg = [
             pkg for pkg in all_org_pkg if pkg.get("repository")
             and pkg["repository"]["name"].lower() == repo_name
-        ]
-    if package_name:
-        all_org_pkg = [
-            pkg for pkg in all_org_pkg if pkg["name"] == package_name
         ]
     return all_org_pkg
 
