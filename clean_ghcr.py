@@ -38,19 +38,18 @@ def get_req(path, params=None):
     if "per_page" not in params:
         params["per_page"] = PER_PAGE
     url = get_url(path)
-    another_page = True
     result = []
-    while another_page:
+    while True:
         response = requests.get(url, headers=get_base_headers(), params=params)
         if not response.ok:
             raise Exception(response.text)
         result.extend(response.json())
-        if "next" in response.links:
-            url = response.links["next"]["url"]
-            if "page" in params:
-                del params["page"]
-        else:
-            another_page = False
+
+        if "next" not in response.links:
+            break
+        url = response.links["next"]["url"]
+        if "page" in params:
+            del params["page"]
     return result
 
 
