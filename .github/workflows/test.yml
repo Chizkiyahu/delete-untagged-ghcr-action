@@ -4,6 +4,8 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+  
 concurrency: testing
 jobs:
   add_temp_pkgs1:
