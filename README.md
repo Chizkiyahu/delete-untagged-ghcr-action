@@ -2,7 +2,7 @@
 [![test](https://github.com/Chizkiyahu/delete-untagged-ghcr-action/actions/workflows/test.yml/badge.svg)](https://github.com/Chizkiyahu/delete-untagged-ghcr-action/actions/workflows/test.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/94534b5b1d7c4c938149bde7dc6d18e2)](https://www.codacy.com/gh/Chizkiyahu/delete-untagged-ghcr-action/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Chizkiyahu/delete-untagged-ghcr-action&amp;utm_campaign=Badge_Grade)
 
-Action for delete containers from Github container registry 
+Action for delete containers from Github container registry
 
 delete all / untagged ghcr containers in a repository
 ## Usage
@@ -35,9 +35,8 @@ delete all / untagged ghcr containers in a repository
     # Default: true
     # choices: true, false
     untagged_only: true
-    # Except untagged multiplatform packages from deletion 
+    # Except untagged multiplatform packages from deletion
     # only for untagged_only=true
-    # needs docker installed
     except_untagged_multiplatform: false
     # the owner type
     # required: true
@@ -91,14 +90,6 @@ delete all / untagged ghcr containers in a repository
 
 ## Delete all containers from repository without tags except untagged multiplatform packages
 ```yaml
-- name: Set up Docker Buildx
-  uses: docker/setup-buildx-action@v2
-- name: Login to GitHub Container Registry with PAT_TOKEN
-  uses: docker/login-action@v2
-  with:
-    registry: ghcr.io
-    username: ${{ github.actor }}
-    password: ${{ secrets.PAT_TOKEN }}
 - name: Delete all containers from repository without tags
     uses: Chizkiyahu/delete-untagged-ghcr-action@v2
     with:
@@ -108,11 +99,10 @@ delete all / untagged ghcr containers in a repository
         untagged_only: true
         owner_type: org # or user
         except_untagged_multiplatform: true
-
 ```
 
 
-## Delete all containers from repository 
+## Delete all containers from repository
 ```yaml
 - name: Delete all containers from repository
     uses: Chizkiyahu/delete-untagged-ghcr-action@v2
@@ -139,14 +129,6 @@ delete all / untagged ghcr containers in a repository
 
 ## Delete all containers from package without tags except untagged multiplatform packages
 ```yaml
-- name: Set up Docker Buildx
-  uses: docker/setup-buildx-action@v2
-- name: Login to GitHub Container Registry with PAT_TOKEN
-  uses: docker/login-action@v2
-  with:
-    registry: ghcr.io
-    username: ${{ github.actor }}
-    password: ${{ secrets.PAT_TOKEN }}
 - name: Delete all containers from package without tags
     uses: Chizkiyahu/delete-untagged-ghcr-action@v2
     with:
@@ -159,7 +141,7 @@ delete all / untagged ghcr containers in a repository
         except_untagged_multiplatform: true
 ```
 
-## Delete all containers from package 
+## Delete all containers from package
 ```yaml
 - name: Delete all containers from package
     uses: Chizkiyahu/delete-untagged-ghcr-action@v2

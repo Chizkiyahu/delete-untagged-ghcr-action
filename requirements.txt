@@ -1,1 +1,2 @@
 requests
+python-dxf==11.0.0
