@@ -1,5 +1,6 @@
 import json
 import subprocess
+import urllib.parse
 
 import requests
 import argparse
@@ -38,33 +39,39 @@ def get_req(path, params=None):
     if "per_page" not in params:
         params["per_page"] = PER_PAGE
     url = get_url(path)
-    another_page = True
     result = []
-    while another_page:
+    while True:
         response = requests.get(url, headers=get_base_headers(), params=params)
         if not response.ok:
             raise Exception(response.text)
         result.extend(response.json())
-        if "next" in response.links:
-            url = response.links["next"]["url"]
-            if "page" in params:
-                del params["page"]
-        else:
-            another_page = False
+
+        if "next" not in response.links:
+            break
+        url = response.links["next"]["url"]
+        if "page" in params:
+            del params["page"]
     return result
 
 
 def get_list_packages(owner, repo_name, owner_type, package_name):
+    if package_name:
+        clean_package_name = urllib.parse.quote(package_name, safe='')
+        url = get_url(
+            f"/{owner_type}s/{owner}/packages/container/{clean_package_name}")
+        response = requests.get(url, headers=get_base_headers())
+        if not response.ok:
+            if response.status_code == 404:
+                return []
+            raise Exception(response.text)
+        return [response.json()]
+
     all_org_pkg = get_req(
         f"/{owner_type}s/{owner}/packages?package_type=container")
     if repo_name:
         all_org_pkg = [
             pkg for pkg in all_org_pkg if pkg.get("repository")
             and pkg["repository"]["name"].lower() == repo_name
-        ]
-    if package_name:
-        all_org_pkg = [
-            pkg for pkg in all_org_pkg if pkg["name"] == package_name
         ]
     return all_org_pkg
 
