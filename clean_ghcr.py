@@ -1,5 +1,6 @@
 import json
 import subprocess
+import urllib.parse
 
 import requests
 import argparse
@@ -55,8 +56,9 @@ def get_req(path, params=None):
 
 def get_list_packages(owner, repo_name, owner_type, package_name):
     if package_name:
+        clean_package_name = urllib.parse.quote(package_name, safe='')
         url = get_url(
-            f"/{owner_type}s/{owner}/packages/container/{package_name}")
+            f"/{owner_type}s/{owner}/packages/container/{clean_package_name}")
         response = requests.get(url, headers=get_base_headers())
         if not response.ok:
             if response.status_code == 404:
@@ -221,6 +223,10 @@ def get_args():
                 f"Mismatch in repository:{args.repository} and repository_owner:{args.repository_owner}"
             )
         args.repository = repository
+    if args.package_name and args.package_name.count("/") == 2:
+        _, repo_name, package_name = args.package_name.split("/")
+        package_name = f"{repo_name}/{package_name}"
+        args.package_name = package_name
     args.repository = args.repository.lower()
     args.repository_owner = args.repository_owner.lower()
     args.package_name = args.package_name.lower()
