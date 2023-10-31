@@ -10,7 +10,7 @@ delete all / untagged ghcr containers in a repository
 <!-- start usage -->
 ```yaml
 - name: Delete untagged ghcr
-  uses: Chizkiyahu/delete-untagged-ghcr-action@v2
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v3
   with:
     # Personal access token (PAT) used to fetch the repository. The PAT is configured
     # with the local git config, which enables your scripts to run authenticated git
@@ -58,17 +58,17 @@ delete all / untagged ghcr containers in a repository
 ## Delete all owner containers without tags
 ```yaml
 - name: Delete all owner containers without tags
-    uses: Chizkiyahu/delete-untagged-ghcr-action@v2
-    with:
-        token: ${{ secrets.PAT_TOKEN }}
-        repository_owner: ${{ github.repository_owner }}
-        owner_type: org # or user
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v3
+  with:
+      token: ${{ secrets.PAT_TOKEN }}
+      repository_owner: ${{ github.repository_owner }}
+      owner_type: org # or user
 ```
 
 ## Delete all owner containers
 ```yaml
-- name: Delete all owner containers
-    uses: Chizkiyahu/delete-untagged-ghcr-action@v2
+  - name: Delete all owner containers
+    uses: Chizkiyahu/delete-untagged-ghcr-action@v3
     with:
         token: ${{ secrets.PAT_TOKEN }}
         repository_owner: ${{ github.repository_owner }}
@@ -78,8 +78,8 @@ delete all / untagged ghcr containers in a repository
 
 ## Delete all containers from repository without tags
 ```yaml
-- name: Delete all containers from repository without tags
-    uses: Chizkiyahu/delete-untagged-ghcr-action@v2
+  - name: Delete all containers from repository without tags
+    uses: Chizkiyahu/delete-untagged-ghcr-action@v3
     with:
         token: ${{ secrets.PAT_TOKEN }}
         repository_owner: ${{ github.repository_owner }}
@@ -100,14 +100,14 @@ delete all / untagged ghcr containers in a repository
     username: ${{ github.actor }}
     password: ${{ secrets.PAT_TOKEN }}
 - name: Delete all containers from repository without tags
-    uses: Chizkiyahu/delete-untagged-ghcr-action@v2
-    with:
-        token: ${{ secrets.PAT_TOKEN }}
-        repository_owner: ${{ github.repository_owner }}
-        repository: ${{ github.repository }}
-        untagged_only: true
-        owner_type: org # or user
-        except_untagged_multiplatform: true
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v3
+  with:
+      token: ${{ secrets.PAT_TOKEN }}
+      repository_owner: ${{ github.repository_owner }}
+      repository: ${{ github.repository }}
+      untagged_only: true
+      owner_type: org # or user
+      except_untagged_multiplatform: true
 
 ```
 
@@ -115,26 +115,26 @@ delete all / untagged ghcr containers in a repository
 ## Delete all containers from repository 
 ```yaml
 - name: Delete all containers from repository
-    uses: Chizkiyahu/delete-untagged-ghcr-action@v2
-    with:
-        token: ${{ secrets.PAT_TOKEN }}
-        repository_owner: ${{ github.repository_owner }}
-        repository: ${{ github.repository }}
-        untagged_only: false
-        owner_type: org # or user
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v3
+  with:
+      token: ${{ secrets.PAT_TOKEN }}
+      repository_owner: ${{ github.repository_owner }}
+      repository: ${{ github.repository }}
+      untagged_only: false
+      owner_type: org # or user
 ```
 
 ## Delete all containers from package without tags
 ```yaml
 - name: Delete all containers from package without tags
-    uses: Chizkiyahu/delete-untagged-ghcr-action@v2
-    with:
-        token: ${{ github.token }}
-        repository_owner: ${{ github.repository_owner }}
-        repository: ${{ github.repository }}
-        package_name: the-package-name
-        untagged_only: true
-        owner_type: org # or user
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v3
+  with:
+      token: ${{ github.token }}
+      repository_owner: ${{ github.repository_owner }}
+      repository: ${{ github.repository }}
+      package_name: the-package-name # full name includes the repository name if is connected to repository
+      untagged_only: true
+      owner_type: org # or user
 ```
 
 ## Delete all containers from package without tags except untagged multiplatform packages
@@ -148,26 +148,26 @@ delete all / untagged ghcr containers in a repository
     username: ${{ github.repository_owner }}
     password: ${{ github.token }}
 - name: Delete all containers from package without tags
-    uses: Chizkiyahu/delete-untagged-ghcr-action@v2
-    with:
-        token: ${{ github.token }}
-        repository_owner: ${{ github.repository_owner }}
-        repository: ${{ github.repository }}
-        package_name: the-package-name
-        untagged_only: true
-        owner_type: org # or user
-        except_untagged_multiplatform: true
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v3
+  with:
+      token: ${{ github.token }}
+      repository_owner: ${{ github.repository_owner }}
+      repository: ${{ github.repository }}
+      package_name: the-package-name  # full name includes the repository name if is connected to repository
+      untagged_only: true
+      owner_type: org # or user
+      except_untagged_multiplatform: true
 ```
 
 ## Delete all containers from package 
 ```yaml
 - name: Delete all containers from package
-    uses: Chizkiyahu/delete-untagged-ghcr-action@v2
-    with:
-        token: ${{ github.token }}
-        repository_owner: ${{ github.repository_owner }}
-        repository: ${{ github.repository }}
-        package_name: the-package-name
-        untagged_only: false
-        owner_type: org # or user
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v3
+  with:
+      token: ${{ github.token }}
+      repository_owner: ${{ github.repository_owner }}
+      repository: ${{ github.repository }}
+      package_name: the-package-name  # full name includes the repository name if is connected to repository
+      untagged_only: false
+      owner_type: org # or user
 ```
