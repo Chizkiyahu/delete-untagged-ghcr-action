@@ -129,7 +129,7 @@ delete all / untagged ghcr containers in a repository
 - name: Delete all containers from package without tags
   uses: Chizkiyahu/delete-untagged-ghcr-action@v3
   with:
-      token: ${{ github.token }}
+      token: ${{ secrets.PAT_TOKEN }}
       repository_owner: ${{ github.repository_owner }}
       repository: ${{ github.repository }}
       package_name: the-package-name # full name includes the repository name if is connected to repository
@@ -150,7 +150,7 @@ delete all / untagged ghcr containers in a repository
 - name: Delete all containers from package without tags
   uses: Chizkiyahu/delete-untagged-ghcr-action@v3
   with:
-      token: ${{ github.token }}
+      token: ${{ secrets.PAT_TOKEN }}
       repository_owner: ${{ github.repository_owner }}
       repository: ${{ github.repository }}
       package_name: the-package-name  # full name includes the repository name if is connected to repository
@@ -164,7 +164,7 @@ delete all / untagged ghcr containers in a repository
 - name: Delete all containers from package
   uses: Chizkiyahu/delete-untagged-ghcr-action@v3
   with:
-      token: ${{ github.token }}
+      token: ${{ secrets.PAT_TOKEN }}
       repository_owner: ${{ github.repository_owner }}
       repository: ${{ github.repository }}
       package_name: the-package-name  # full name includes the repository name if is connected to repository
