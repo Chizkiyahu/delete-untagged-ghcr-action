@@ -16,22 +16,22 @@ jobs:
         i: [1,2]
         type: ['p1', 'p2']
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: lower case repository
         id: lower_case_repository
-        uses: ASzc/change-string-case-action@v2
+        uses: ASzc/change-string-case-action@v6
         with:
           string: ${{ github.repository }}
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           file: ./CICD/Dockerfile_temp
           tags: ghcr.io/${{ steps.lower_case_repository.outputs.lowercase }}/${{ matrix.type }}:${{ matrix.i }}
@@ -48,23 +48,23 @@ jobs:
         i: [ 1,2 ]
         type: [ 'p1', 'p2' ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: lower case repository
         id: lower_case_repository
-        uses: ASzc/change-string-case-action@v2
+        uses: ASzc/change-string-case-action@v6
         with:
           string: ${{ github.repository }}
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           file: ./CICD/Dockerfile_temp
           tags: ghcr.io/${{ steps.lower_case_repository.outputs.lowercase }}/${{ matrix.type }}:${{ matrix.i }}
@@ -79,11 +79,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: add_temp_pkgs2
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Login to GitHub Container Registry with PAT_TOKEN
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -102,7 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:   clean_untagged_pkgs1
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./
         with:
           token: ${{ secrets.PAT_TOKEN }}
@@ -117,7 +117,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: clean_untagged_pkgs2
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./
         with:
           token: ${{ secrets.PAT_TOKEN }}
@@ -132,7 +132,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: delete_package
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./
         with:
           token: ${{ secrets.PAT_TOKEN }}
