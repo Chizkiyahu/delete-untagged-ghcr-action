@@ -23,7 +23,7 @@ inputs:
     required: false
 
   package_name:
-    description: 'Delete only from package name'
+    description: 'Delete only from comma separated package names'
     required: false
 
   untagged_only:
@@ -54,8 +54,8 @@ runs:
         if [[ $repo ]]; then
           args+=" --repository $repo "
         fi
-        if [[ $pkg ]]; then
-          args+=" --package_name $pkg "
+        if [[ $pkgs ]]; then
+          args+=" --package_names $pkgs "
         fi
         args+=" --untagged_only ${{ inputs.untagged_only }} "
         args+=" --except_untagged_multiplatform ${{ inputs.except_untagged_multiplatform }} "
@@ -65,4 +65,4 @@ runs:
       shell: bash
       env:
         repo: ${{ inputs.repository }}
-        pkg: ${{ inputs.package_name }}
+        pkgs: ${{ inputs.package_name }}

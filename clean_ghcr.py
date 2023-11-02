@@ -54,33 +54,36 @@ def get_req(path, params=None):
     return result
 
 
-def get_list_packages(owner, repo_name, owner_type, package_name):
-    if package_name:
-        clean_package_name = urllib.parse.quote(package_name, safe='')
-        url = get_url(
-            f"/{owner_type}s/{owner}/packages/container/{clean_package_name}")
-        response = requests.get(url, headers=get_base_headers())
-        if not response.ok:
-            if response.status_code == 404:
-                return []
-            raise Exception(response.text)
-        return [response.json()]
+def get_list_packages(owner, repo_name, owner_type, package_names):
+    pkgs = []
+    if package_names:
+        for package_name in package_names:
+            clean_package_name = urllib.parse.quote(package_name, safe='')
+            url = get_url(
+                f"/{owner_type}s/{owner}/packages/container/{clean_package_name}")
+            response = requests.get(url, headers=get_base_headers())
+            if not response.ok:
+                if response.status_code == 404:
+                    return []
+                raise Exception(response.text)
+            pkgs.append(response.json())
+    else:
+        pkgs = get_req(
+            f"/{owner_type}s/{owner}/packages?package_type=container")
 
-    all_org_pkg = get_req(
-        f"/{owner_type}s/{owner}/packages?package_type=container")
     if repo_name:
-        all_org_pkg = [
-            pkg for pkg in all_org_pkg if pkg.get("repository")
+        pkgs = [
+            pkg for pkg in pkgs if pkg.get("repository")
             and pkg["repository"]["name"].lower() == repo_name
         ]
-    return all_org_pkg
+    return pkgs
 
 
-def get_all_package_versions(owner, repo_name, package_name, owner_type):
+def get_all_package_versions(owner, repo_name, package_names, owner_type):
     packages = get_list_packages(
         owner=owner,
         repo_name=repo_name,
-        package_name=package_name,
+        package_names=package_names,
         owner_type=owner_type,
     )
     return {
@@ -118,13 +121,13 @@ def get_manifest(image):
     return res.stdout.decode("utf-8")
 
 
-def delete_pkgs(owner, repo_name, owner_type, package_name, untagged_only,
+def delete_pkgs(owner, repo_name, owner_type, package_names, untagged_only,
                 except_untagged_multiplatform):
     if untagged_only:
         all_packages = get_all_package_versions(
             owner=owner,
             repo_name=repo_name,
-            package_name=package_name,
+            package_names=package_names,
             owner_type=owner_type,
         )
         tagged_pkgs = {
@@ -150,7 +153,7 @@ def delete_pkgs(owner, repo_name, owner_type, package_name, untagged_only,
         packages = get_list_packages(
             owner=owner,
             repo_name=repo_name,
-            package_name=package_name,
+            package_names=package_names,
             owner_type=owner_type,
         )
     status = [del_req(pkg["url"]).ok for pkg in packages]
@@ -192,11 +195,11 @@ def get_args():
         help="Delete only repository name",
     )
     parser.add_argument(
-        "--package_name",
+        "--package_names",
         type=str,
         required=False,
         default="",
-        help="Delete only package name",
+        help="Delete only comma separated package names",
     )
     parser.add_argument(
         "--untagged_only",
@@ -225,7 +228,8 @@ def get_args():
         args.repository = repository
     args.repository = args.repository.lower()
     args.repository_owner = args.repository_owner.lower()
-    args.package_name = args.package_name.lower()
+    args.package_names = args.package_names.lower()
+    args.package_names = [p.strip() for p in args.package_names.split(",")] if args.package_names else []
     return args
 
 
@@ -234,7 +238,7 @@ if __name__ == "__main__":
     delete_pkgs(
         owner=args.repository_owner,
         repo_name=args.repository,
-        package_name=args.package_name,
+        package_names=args.package_names,
         untagged_only=args.untagged_only,
         owner_type=args.owner_type,
         except_untagged_multiplatform=args.except_untagged_multiplatform)

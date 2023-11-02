@@ -26,8 +26,8 @@ delete all / untagged ghcr containers in a repository
     # 'The repository owner name'
     # Default: ${{ github.repository_owner }}
     repository_owner: ''
-    # 'The package name'
-    # Delete only from package name
+    # 'The package names'
+    # Delete only from comma separated package names
     # required: false
     package_name: ''
     # Delete only package versions without tag
@@ -159,7 +159,7 @@ delete all / untagged ghcr containers in a repository
       except_untagged_multiplatform: true
 ```
 
-## Delete all containers from package 
+## Delete all containers from packages
 ```yaml
 - name: Delete all containers from package
   uses: Chizkiyahu/delete-untagged-ghcr-action@v3
@@ -167,7 +167,7 @@ delete all / untagged ghcr containers in a repository
       token: ${{ github.token }}
       repository_owner: ${{ github.repository_owner }}
       repository: ${{ github.repository }}
-      package_name: the-package-name
+      package_name: the-package-name, other-package-name
       untagged_only: false
       owner_type: org # or user
 ```
