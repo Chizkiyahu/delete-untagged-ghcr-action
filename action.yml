@@ -4,7 +4,7 @@ description: 'Delete containers on github container registry without tags'
 branding:
   icon: 'trash-2'
   color: 'blue'
-inputs:  
+inputs:
   token:
     description: >
       Personal access token (PAT) used to fetch the repository. The PAT is configured
@@ -12,43 +12,44 @@ inputs:
       commands. The post-job step removes the PAT.
       needs delete:packages permissions
     required: true
- 
   repository_owner:
     description: 'The repository owner name'
     default: ${{ github.repository_owner }}
     required: true
-
   repository:
     description: 'Delete only from repository name'
     required: false
-
   package_name:
     description: 'Delete only from comma separated package names'
     required: false
-
   untagged_only:
       description: 'Delete only package versions without tag'
       default: true
-
   except_untagged_multiplatform:
     description: 'Except untagged multiplatform packages from deletion (only for --untagged_only)'
     default: false
-  
   owner_type:
       description : "Owner type (org or user)"
       required: true
-
-
+outputs:
+  num_deleted:
+    description: 'Number of package versions that were deleted during the run.'
+    value:  ${{ steps.delete-untagged-ghcr-action.outputs.num_deleted }}
 
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-python@v4
+    - name: Setup Python
+      uses: actions/setup-python@v4
       with:
         python-version: '3.9'
-    - run: pip install -r ${{ github.action_path }}/requirements.txt
+    - name: Install Python dependencies
       shell: bash
-    - run: | 
+      run: pip install -r ${{ github.action_path }}/requirements.txt
+    - name: Run action
+      id: delete-untagged-ghcr-action
+      shell: bash
+      run: |
         args=( "--token" "${{ inputs.token }}" )
         args+=( "--repository_owner" "${{ inputs.repository_owner }}" )
         if [[ -n "${{ inputs.repository }}" ]]; then
@@ -62,4 +63,3 @@ runs:
         args+=( "--owner_type" "${{ inputs.owner_type }}" )
         echo "args: ${args[@]}"
         python ${{ github.action_path }}/clean_ghcr.py "${args[@]}"
-      shell: bash
