@@ -132,7 +132,7 @@ delete all / untagged ghcr containers in a repository
       token: ${{ github.token }}
       repository_owner: ${{ github.repository_owner }}
       repository: ${{ github.repository }}
-      package_name: the-package-name # full name includes the repository name if is connected to repository
+      package_name: the-package-name
       untagged_only: true
       owner_type: org # or user
 ```
@@ -153,7 +153,7 @@ delete all / untagged ghcr containers in a repository
       token: ${{ github.token }}
       repository_owner: ${{ github.repository_owner }}
       repository: ${{ github.repository }}
-      package_name: the-package-name  # full name includes the repository name if is connected to repository
+      package_name: the-package-name
       untagged_only: true
       owner_type: org # or user
       except_untagged_multiplatform: true
@@ -167,7 +167,7 @@ delete all / untagged ghcr containers in a repository
       token: ${{ github.token }}
       repository_owner: ${{ github.repository_owner }}
       repository: ${{ github.repository }}
-      package_name: the-package-name  # full name includes the repository name if is connected to repository
+      package_name: the-package-name
       untagged_only: false
       owner_type: org # or user
 ```

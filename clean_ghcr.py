@@ -223,10 +223,6 @@ def get_args():
                 f"Mismatch in repository:{args.repository} and repository_owner:{args.repository_owner}"
             )
         args.repository = repository
-    if args.package_name and args.package_name.count("/") == 2:
-        _, repo_name, package_name = args.package_name.split("/")
-        package_name = f"{repo_name}/{package_name}"
-        args.package_name = package_name
     args.repository = args.repository.lower()
     args.repository_owner = args.repository_owner.lower()
     args.package_name = args.package_name.lower()
