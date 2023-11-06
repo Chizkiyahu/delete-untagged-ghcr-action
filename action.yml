@@ -23,7 +23,7 @@ inputs:
     required: false
 
   package_name:
-    description: 'Delete only from package name'
+    description: 'Delete only from comma separated package names'
     required: false
 
   untagged_only:
@@ -49,20 +49,17 @@ runs:
     - run: pip install -r ${{ github.action_path }}/requirements.txt
       shell: bash
     - run: | 
-        args="--token ${{ inputs.token }} "
-        args+=" --repository_owner ${{ inputs.repository_owner }} "
-        if [[ $repo ]]; then
-          args+=" --repository $repo "
+        args=( "--token" "${{ inputs.token }}" )
+        args+=( "--repository_owner" "${{ inputs.repository_owner }}" )
+        if [[ -n "${{ inputs.repository }}" ]]; then
+          args+=( "--repository" "${{ inputs.repository }}" )
         fi
-        if [[ $pkg ]]; then
-          args+=" --package_name $pkg "
+        if [[ -n "${{ inputs.package_name }}" ]]; then
+          args+=( "--package_names" "${{ inputs.package_name }}" )
         fi
-        args+=" --untagged_only ${{ inputs.untagged_only }} "
-        args+=" --except_untagged_multiplatform ${{ inputs.except_untagged_multiplatform }} "
-        args+=" --owner_type ${{ inputs.owner_type }} "
-        echo "args: $args"
-        python ${{ github.action_path }}/clean_ghcr.py $args
+        args+=( "--untagged_only" "${{ inputs.untagged_only }}" )
+        args+=( "--except_untagged_multiplatform" "${{ inputs.except_untagged_multiplatform }}" )
+        args+=( "--owner_type" "${{ inputs.owner_type }}" )
+        echo "args: ${args[@]}"
+        python ${{ github.action_path }}/clean_ghcr.py "${args[@]}"
       shell: bash
-      env:
-        repo: ${{ inputs.repository }}
-        pkg: ${{ inputs.package_name }}

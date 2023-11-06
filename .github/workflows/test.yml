@@ -16,8 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        i: [1,2]
-        type: ['p1', 'p2']
+        i: [1, 2]
+        type: ['p1', 'p2', 'p3']
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -48,8 +48,8 @@ jobs:
     needs: add_temp_pkgs1
     strategy:
       matrix:
-        i: [ 1,2 ]
-        type: [ 'p1', 'p2' ]
+        i: [1, 2]
+        type: ['p1', 'p2', 'p3']
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -127,6 +127,21 @@ jobs:
           repository_owner: ${{ github.repository_owner }}
           repository: ${{ github.repository }}
           package_name: p1
+          untagged_only: false
+          owner_type: user
+
+  delete_multiple_packages:
+    name: delete package
+    runs-on: ubuntu-latest
+    needs: clean_untagged_pkgs2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository_owner: ${{ github.repository_owner }}
+          repository: ${{ github.repository }}
+          package_name: p2, p3
           untagged_only: false
           owner_type: user
 
