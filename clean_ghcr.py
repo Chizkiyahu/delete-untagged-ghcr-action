@@ -60,7 +60,8 @@ def get_list_packages(owner, repo_name, owner_type, package_names):
         for package_name in package_names:
             clean_package_name = urllib.parse.quote(package_name, safe='')
             url = get_url(
-                f"/{owner_type}s/{owner}/packages/container/{clean_package_name}")
+                f"/{owner_type}s/{owner}/packages/container/{clean_package_name}"
+            )
             response = requests.get(url, headers=get_base_headers())
             if not response.ok:
                 if response.status_code == 404:
@@ -229,7 +230,8 @@ def get_args():
     args.repository = args.repository.lower()
     args.repository_owner = args.repository_owner.lower()
     args.package_names = args.package_names.lower()
-    args.package_names = [p.strip() for p in args.package_names.split(",")] if args.package_names else []
+    args.package_names = [p.strip() for p in args.package_names.split(",")
+                          ] if args.package_names else []
     return args
 
 
