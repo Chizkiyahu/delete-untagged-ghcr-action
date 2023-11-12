@@ -168,7 +168,7 @@ def delete_pkgs(owner, repo_name, owner_type, package_names, untagged_only,
     print(f"Deleted {len_ok} package")
     if "GITHUB_OUTPUT" in os.environ:
         with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-                f.write(f"num_deleted={len_ok}\n")
+            f.write(f"num_deleted={len_ok}\n")
     if len_fail > 0:
         raise Exception(f"fail delete {len_fail}")
 
