@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 import urllib.parse
 
@@ -72,6 +73,9 @@ def get_list_packages(owner, repo_name, owner_type, package_names):
         pkgs = get_req(
             f"/{owner_type}s/{owner}/packages?package_type=container")
 
+    # this is a strange bug in github api, it returns deleted packages
+    # I open a ticket for that
+    pkgs = [pkg for pkg in pkgs if not pkg["name"].startswith('deleted_')]
     if repo_name:
         pkgs = [
             pkg for pkg in pkgs if pkg.get("repository")
@@ -160,7 +164,11 @@ def delete_pkgs(owner, repo_name, owner_type, package_names, untagged_only,
     status = [del_req(pkg["url"]).ok for pkg in packages]
     len_ok = len([ok for ok in status if ok])
     len_fail = len(status) - len_ok
+
     print(f"Deleted {len_ok} package")
+    if "GITHUB_OUTPUT" in os.environ:
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+            f.write(f"num_deleted={len_ok}\n")
     if len_fail > 0:
         raise Exception(f"fail delete {len_fail}")
 
