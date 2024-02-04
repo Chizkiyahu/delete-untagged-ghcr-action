@@ -18,7 +18,7 @@ jobs:
         run: |
           echo "GITHUB_SHA_SHORT=$(echo ${{ github.sha }} | cut -c 1-6)" >> $GITHUB_ENV
           echo ${{ env.GITHUB_SHA_SHORT }}
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.9'
       - run: pip install yapf
