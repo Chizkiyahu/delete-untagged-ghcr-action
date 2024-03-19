@@ -1,4 +1,4 @@
-# delete-untagged-ghcr-action V2
+# delete-untagged-ghcr-action 
 [![test](https://github.com/Chizkiyahu/delete-untagged-ghcr-action/actions/workflows/test.yml/badge.svg)](https://github.com/Chizkiyahu/delete-untagged-ghcr-action/actions/workflows/test.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/94534b5b1d7c4c938149bde7dc6d18e2)](https://www.codacy.com/gh/Chizkiyahu/delete-untagged-ghcr-action/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Chizkiyahu/delete-untagged-ghcr-action&amp;utm_campaign=Badge_Grade)
 
