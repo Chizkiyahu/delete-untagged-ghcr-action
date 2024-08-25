@@ -29,7 +29,9 @@ def del_req(path):
     if res.ok:
         print(f"Deleted {path}")
     else:
-        print(res.text)
+        print(
+            f"Error when trying to delete URL: {get_url(path)} MSG: {res.text}"
+        )
     return res
 
 
