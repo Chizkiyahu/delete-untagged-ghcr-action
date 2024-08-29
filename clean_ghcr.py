@@ -106,10 +106,17 @@ def get_all_package_versions_per_pkg(package_url):
 
 def get_deps_pkgs(owner, pkgs):
     ids = []
+    successful = True
     for pkg in pkgs:
         for pkg_ver in pkgs[pkg]:
-            image = f"{DOCKER_ENDPOINT}{owner}/{pkg}@{pkg_ver['name']}"
-            ids.extend(get_image_deps(image))
+            try:
+                image = f"{DOCKER_ENDPOINT}{owner}/{pkg}@{pkg_ver['name']}"
+                ids.extend(get_image_deps(image))
+            except Exception as e:
+                print(e)
+                successful = False
+    if not successful:
+        raise Exception("Error on image dependency resolution")
     return ids
 
 
