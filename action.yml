@@ -18,6 +18,7 @@ inputs:
     required: true
   repository:
     description: 'Delete only from repository name'
+    default: ${{ github.repository }}
     required: false
   package_name:
     description: 'Delete only from comma separated package names'
@@ -26,8 +27,8 @@ inputs:
       description: 'Delete only package versions without tag'
       default: true
   except_untagged_multiplatform:
-    description: 'Except untagged multiplatform packages from deletion (only for --untagged_only)'
-    default: false
+    description: 'Exclude untagged multiplatform packages from deletion (only for --untagged_only)'
+    default: true
   owner_type:
       description : "Owner type (org or user)"
       required: true

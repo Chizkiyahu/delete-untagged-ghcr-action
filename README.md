@@ -35,10 +35,12 @@ delete all / untagged ghcr containers in a repository
     # Default: true
     # choices: true, false
     untagged_only: true
-    # Except untagged multiplatform packages from deletion
+    # Exclude untagged multiplatform packages from deletion
+    # Manifests are usually such packages so they should be excluded
     # only for untagged_only=true
+    # Default: true
     # needs docker installed
-    except_untagged_multiplatform: false
+    except_untagged_multiplatform: true
     # the owner type
     # required: true
     # choices: org, user
