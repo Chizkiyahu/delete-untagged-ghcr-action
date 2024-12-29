@@ -1,0 +1,89 @@
+name: signed
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency: testing
+permissions:
+  contents: read
+  packages: write
+  # Required by nested `reusable.yml`.
+  id-token: write
+jobs:
+  reset:
+    name: reset to a clean state
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          repository_owner: ${{ github.repository_owner }}
+          repository: ${{ github.repository }}
+          untagged_only: false
+          owner_type: user
+          with_sigs: true
+
+  add_temp_pkgs3:
+    name: Add temporary signed packages for testing
+    needs: reset
+    uses: ./.github/workflows/reusable.yml
+    with:
+      image: 'p5'
+      tag: 1
+      sign: true
+
+  add_temp_pkgs4:
+    name: Add temporary signed packages for testing make the first untagged (keep signed tagged)
+    needs: add_temp_pkgs3
+    uses: ./.github/workflows/reusable.yml
+    with:
+      image: 'p5'
+      tag: 1
+      sign: true
+
+  delete_package_with_signature:
+    name: delete package and signature
+    runs-on: ubuntu-latest
+    needs: add_temp_pkgs4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        id: deleted-action
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository_owner: ${{ github.repository_owner }}
+          repository: ${{ github.repository }}
+          package_name: p5
+          untagged_only: true
+          owner_type: user
+          with_sigs: true
+      - shell: bash
+        run: |
+          if [[ "${{ steps.deleted-action.outputs.num_deleted }}" != 2 ]]; then
+            exit 1
+          fi
+
+  clean_repo:
+    name: delete all package in repo
+    runs-on: ubuntu-latest
+    needs: delete_package_with_signature
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        id: deleted-action
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          repository_owner: ${{ github.repository_owner }}
+          repository: ${{ github.repository }}
+          untagged_only: false
+          owner_type: user
+          with_sigs: true
+      - shell: bash
+        run: |
+          if [[ "${{ steps.deleted-action.outputs.num_deleted }}" != 1 ]]; then
+            exit 1
+          fi

@@ -10,6 +10,8 @@ concurrency: testing
 permissions:
   contents: read
   packages: write
+  # Required by nested `reusable.yml`.
+  id-token: write
 jobs:
   reset:
     name: reset to a clean state
@@ -26,70 +28,28 @@ jobs:
 
   add_temp_pkgs1:
     name: Add temporary packages for testing
-    runs-on: ubuntu-latest
     needs: reset
     strategy:
       matrix:
-        i: [1, 2]
-        type: ['p1', 'p2', 'p3']
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: lower case repository_owner
-        id: lower_case_repository_owner
-        uses: ASzc/change-string-case-action@v6
-        with:
-          string: ${{ github.repository_owner }}
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          file: ./CICD/Dockerfile_temp
-          tags: ghcr.io/${{ steps.lower_case_repository_owner.outputs.lowercase }}/${{ matrix.type }}:${{ matrix.i }}
-          build-args: |
-            I=${{ matrix.i }}
-          push: true
+        image: ['p1', 'p2', 'p3']
+        tag: [1, 2]
+    uses: ./.github/workflows/reusable.yml
+    with:
+      image: ${{ matrix.image }}
+      tag: ${{ matrix.tag }}
 
   add_temp_pkgs2:
     name: Add temporary packages for testing make the first untagged
-    runs-on: ubuntu-latest
     needs: add_temp_pkgs1
     strategy:
       matrix:
-        i: [1, 2]
-        type: ['p1', 'p2', 'p3']
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: lower case repository_owner
-        id: lower_case_repository_owner
-        uses: ASzc/change-string-case-action@v6
-        with:
-          string: ${{ github.repository_owner }}
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          file: ./CICD/Dockerfile_temp
-          tags: ghcr.io/${{ steps.lower_case_repository_owner.outputs.lowercase }}/${{ matrix.type }}:${{ matrix.i }}
-          build-args: |
-            I=${{ matrix.i }}
-          push: true
-          platforms: linux/amd64,linux/arm64
-
+        image: ['p1', 'p2', 'p3']
+        tag: [1, 2]
+    uses: ./.github/workflows/reusable.yml
+    with:
+      image: ${{ matrix.image }}
+      tag: ${{ matrix.tag }}
+      multiplatform: true
 
   clean_untagged_pkgs1:
     name: clean untagged packages
