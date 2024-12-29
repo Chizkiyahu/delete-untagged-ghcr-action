@@ -24,14 +24,18 @@ inputs:
     description: 'Delete only from comma separated package names'
     required: false
   untagged_only:
-      description: 'Delete only package versions without tag'
-      default: true
+    description: 'Delete only package versions without tag'
+    default: true
   except_untagged_multiplatform:
     description: 'Exclude untagged multiplatform packages from deletion (only for --untagged_only)'
     default: true
+  with_sigs:
+    description: 'Include tagged signatures of untagged containers that will be deleted (only for --untagged_only)'
+    default: false
+    required: false
   owner_type:
-      description : "Owner type (org or user)"
-      required: true
+    description : "Owner type (org or user)"
+    required: true
 outputs:
   num_deleted:
     description: 'Number of package versions that were deleted during the run.'
@@ -61,6 +65,7 @@ runs:
         fi
         args+=( "--untagged_only" "${{ inputs.untagged_only }}" )
         args+=( "--except_untagged_multiplatform" "${{ inputs.except_untagged_multiplatform }}" )
+        args+=( "--with_sigs" "${{ inputs.with_sigs }}")
         args+=( "--owner_type" "${{ inputs.owner_type }}" )
         echo "args: ${args[@]}"
         python ${{ github.action_path }}/clean_ghcr.py "${args[@]}"
