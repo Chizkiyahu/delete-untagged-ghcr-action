@@ -136,7 +136,7 @@ def get_manifest(image):
 
 
 def delete_pkgs(owner, repo_name, owner_type, package_names, untagged_only,
-                except_untagged_multiplatform):
+                except_untagged_multiplatform, with_sigs):
     if untagged_only:
         all_packages = get_all_package_versions(
             owner=owner,
@@ -163,6 +163,19 @@ def delete_pkgs(owner, repo_name, owner_type, package_names, untagged_only,
             if not pkg["metadata"]["container"]["tags"]
             and pkg["name"] not in deps_pkgs
         ]
+        if with_sigs:
+            digests = {
+                sha[1]
+                for pkg in packages if len(sha := pkg["name"].split(":")) == 2
+            }
+            old_signed = [
+                pkg for pkg in all_packages if {
+                    sha[1].removesuffix(".sig")
+                    for tag in pkg["metadata"]["container"]["tags"]
+                    if tag and len(sha := tag.split("-")) == 2
+                } & digests
+            ]
+            packages += old_signed
     else:
         packages = get_list_packages(
             owner=owner,
@@ -199,7 +212,7 @@ def get_args():
         "--token",
         type=str,
         required=True,
-        help="Github Personal access token with delete:packages permissions",
+        help="GitHub Personal access token with delete:packages permissions",
     )
     parser.add_argument("--repository_owner",
                         type=str,
@@ -236,6 +249,9 @@ def get_args():
         help=
         "Except untagged multiplatform packages from deletion (only for --untagged_only) needs docker installed",
     )
+    parser.add_argument("--with_sigs",
+                        type=str2bool,
+                        help="Delete old signatures")
     args = parser.parse_args()
     if "/" in args.repository:
         repository_owner, repository = args.repository.split("/")
@@ -260,4 +276,5 @@ if __name__ == "__main__":
         package_names=args.package_names,
         untagged_only=args.untagged_only,
         owner_type=args.owner_type,
-        except_untagged_multiplatform=args.except_untagged_multiplatform)
+        except_untagged_multiplatform=args.except_untagged_multiplatform,
+        with_sigs=args.with_sigs)

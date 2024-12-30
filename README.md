@@ -10,7 +10,7 @@ delete all / untagged ghcr containers in a repository
 <!-- start usage -->
 ```yaml
 - name: Delete untagged ghcr
-  uses: Chizkiyahu/delete-untagged-ghcr-action@v5
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v6
   with:
     # Personal access token (PAT) used to fetch the repository. The PAT is configured
     # with the local git config, which enables your scripts to run authenticated git
@@ -41,26 +41,32 @@ delete all / untagged ghcr containers in a repository
     # Default: true
     # needs docker installed
     except_untagged_multiplatform: true
-    # the owner type
+    # Include signatures corresponding to deleted packages
+    # without tags. Signature has the `sha256-<digest>.sig` tag where 
+    # respective untagged package has `sha256:<digest>` name
+    # required: false
+    # default: false
+    with_sigs: true
+    # The owner type
     # required: true
     # choices: org, user
     owner_type: ''
-
 ```
 <!-- end usage -->
 
 ## Scenarios
--   [Delete all owner containers without tags](#delete-all-owner-containers-without-tags)
--   [Delete all owner containers](#delete-all-owner-containers)
--   [Delete all containers from repository without tags](#delete-all-containers-from-repository-without-tags)
--   [Delete all containers from repository](#delete-all-containers-from-repository)
--   [Delete all containers from package without tags](#delete-all-containers-from-package-without-tags)
--   [Delete all containers from package](#delete-all-containers-from-package)
+- [Delete all owner containers without tags](#delete-all-owner-containers-without-tags)
+- [Delete all owner containers](#delete-all-owner-containers)
+- [Delete all containers from repository without tags](#delete-all-containers-from-repository-without-tags)
+- [Delete all containers from repository](#delete-all-containers-from-repository)
+- [Delete all containers from package without tags](#delete-all-containers-from-package-without-tags)
+- [Delete all containers from package with signatures](#delete-all-containers-from-package-without-tags-and-corresponding-tagged-signatures)
+- [Delete all containers from package](#delete-all-containers-from-package)
 
 ## Delete all owner containers without tags
 ```yaml
 - name: Delete all owner containers without tags
-  uses: Chizkiyahu/delete-untagged-ghcr-action@v5
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v6
   with:
       token: ${{ secrets.PAT_TOKEN }}
       repository_owner: ${{ github.repository_owner }}
@@ -70,7 +76,7 @@ delete all / untagged ghcr containers in a repository
 ## Delete all owner containers
 ```yaml
   - name: Delete all owner containers
-    uses: Chizkiyahu/delete-untagged-ghcr-action@v5
+    uses: Chizkiyahu/delete-untagged-ghcr-action@v6
     with:
         token: ${{ secrets.PAT_TOKEN }}
         repository_owner: ${{ github.repository_owner }}
@@ -81,7 +87,7 @@ delete all / untagged ghcr containers in a repository
 ## Delete all containers from repository without tags
 ```yaml
   - name: Delete all containers from repository without tags
-    uses: Chizkiyahu/delete-untagged-ghcr-action@v5
+    uses: Chizkiyahu/delete-untagged-ghcr-action@v6
     with:
         token: ${{ secrets.PAT_TOKEN }}
         repository_owner: ${{ github.repository_owner }}
@@ -94,7 +100,7 @@ delete all / untagged ghcr containers in a repository
 ## Delete all containers from repository without tags except untagged multiplatform packages
 ```yaml
 - name: Delete all containers from repository without tags
-  uses: Chizkiyahu/delete-untagged-ghcr-action@v5
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v6
   with:
       token: ${{ secrets.PAT_TOKEN }}
       repository_owner: ${{ github.repository_owner }}
@@ -109,7 +115,7 @@ delete all / untagged ghcr containers in a repository
 ## Delete all containers from repository
 ```yaml
 - name: Delete all containers from repository
-  uses: Chizkiyahu/delete-untagged-ghcr-action@v5
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v6
   with:
       token: ${{ secrets.PAT_TOKEN }}
       repository_owner: ${{ github.repository_owner }}
@@ -121,7 +127,7 @@ delete all / untagged ghcr containers in a repository
 ## Delete all containers from package without tags
 ```yaml
 - name: Delete all containers from package without tags
-  uses: Chizkiyahu/delete-untagged-ghcr-action@v5
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v6
   with:
       token: ${{ github.token }}
       repository_owner: ${{ github.repository_owner }}
@@ -134,7 +140,7 @@ delete all / untagged ghcr containers in a repository
 ## Delete all containers from package without tags except untagged multiplatform packages
 ```yaml
 - name: Delete all containers from package without tags
-  uses: Chizkiyahu/delete-untagged-ghcr-action@v5
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v6
   with:
       token: ${{ github.token }}
       repository_owner: ${{ github.repository_owner }}
@@ -145,10 +151,32 @@ delete all / untagged ghcr containers in a repository
       except_untagged_multiplatform: true
 ```
 
+## Delete all containers from package without tags and corresponding tagged signatures
+
+> [!IMPORTANT]
+> This option has been tested with v3.7.0 [`cosign-installer`][cos-inst] action
+> using `cosign-release` v2.4.1. See [workflow](.github/workflows/reusable.yml)
+> for example ("Install cosign" and "Sign the published Docker image" steps).
+
+[cos-inst]: https://github.com/sigstore/cosign-installer
+
+```yaml
+- name: Delete all containers from package without tags
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v6
+  with:
+      token: ${{ github.token }}
+      repository_owner: ${{ github.repository_owner }}
+      repository: ${{ github.repository }}
+      package_name: the-package-name
+      untagged_only: true
+      with_sigs: true
+      owner_type: org # or user
+```
+
 ## Delete all containers from packages
 ```yaml
 - name: Delete all containers from package
-  uses: Chizkiyahu/delete-untagged-ghcr-action@v5
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v6
   with:
       token: ${{ github.token }}
       repository_owner: ${{ github.repository_owner }}
