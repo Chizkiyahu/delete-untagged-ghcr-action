@@ -55,12 +55,13 @@ delete all / untagged ghcr containers in a repository
 <!-- end usage -->
 
 ## Scenarios
--   [Delete all owner containers without tags](#delete-all-owner-containers-without-tags)
--   [Delete all owner containers](#delete-all-owner-containers)
--   [Delete all containers from repository without tags](#delete-all-containers-from-repository-without-tags)
--   [Delete all containers from repository](#delete-all-containers-from-repository)
--   [Delete all containers from package without tags](#delete-all-containers-from-package-without-tags)
--   [Delete all containers from package](#delete-all-containers-from-package)
+- [Delete all owner containers without tags](#delete-all-owner-containers-without-tags)
+- [Delete all owner containers](#delete-all-owner-containers)
+- [Delete all containers from repository without tags](#delete-all-containers-from-repository-without-tags)
+- [Delete all containers from repository](#delete-all-containers-from-repository)
+- [Delete all containers from package without tags](#delete-all-containers-from-package-without-tags)
+- [Delete all containers from package with signatures](#delete-all-containers-from-package-without-tags-and-corresponding-tagged-signatures)
+- [Delete all containers from package](#delete-all-containers-from-package)
 
 ## Delete all owner containers without tags
 ```yaml
@@ -167,6 +168,14 @@ delete all / untagged ghcr containers in a repository
 ```
 
 ## Delete all containers from package without tags and corresponding tagged signatures
+
+> [!IMPORTANT]
+> This option has been tested with v3.7.0 [`cosign-installer`][cos-inst] action
+> using `cosign-release` v2.4.1. See [workflow](.github/workflows/reusable.yml)
+> for example ("Install cosign" and "Sign the published Docker image" steps).
+
+[cos-inst]: https://github.com/sigstore/cosign-installer
+
 ```yaml
 - name: Set up Docker Buildx
   uses: docker/setup-buildx-action@v2
