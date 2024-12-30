@@ -6,7 +6,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
   
-concurrency: testing
+concurrency:
+  group: testing
+  cancel-in-progress: false
+
 permissions:
   contents: read
   packages: write

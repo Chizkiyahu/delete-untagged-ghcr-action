@@ -12,7 +12,10 @@ on:
         default: false
         type: boolean
 
-concurrency: testing
+concurrency:
+  group: testing
+  cancel-in-progress: false
+
 permissions:
   contents: read
   packages: write
