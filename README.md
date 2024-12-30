@@ -166,6 +166,28 @@ delete all / untagged ghcr containers in a repository
       except_untagged_multiplatform: true
 ```
 
+## Delete all containers from package without tags and corresponding tagged signatures
+```yaml
+- name: Set up Docker Buildx
+  uses: docker/setup-buildx-action@v2
+- name: Login to GitHub Container Registry with PAT_TOKEN
+  uses: docker/login-action@v2
+  with:
+    registry: ghcr.io
+    username: ${{ github.repository_owner }}
+    password: ${{ github.token }}
+- name: Delete all containers from package without tags
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v5
+  with:
+      token: ${{ github.token }}
+      repository_owner: ${{ github.repository_owner }}
+      repository: ${{ github.repository }}
+      package_name: the-package-name
+      untagged_only: true
+      with_sigs: true
+      owner_type: org # or user
+```
+
 ## Delete all containers from packages
 ```yaml
 - name: Delete all containers from package
