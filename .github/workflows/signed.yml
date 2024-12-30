@@ -14,7 +14,7 @@ permissions:
   id-token: write
 jobs:
   reset:
-    name: reset to a clean state
+    name: Reset to a clean state
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -46,7 +46,7 @@ jobs:
       sign: true
 
   delete_package_with_signature:
-    name: delete package and signature
+    name: Delete package and signature
     runs-on: ubuntu-latest
     needs: add_temp_pkgs4
     steps:
@@ -68,7 +68,7 @@ jobs:
           fi
 
   clean_repo:
-    name: delete all package in repo
+    name: Delete all packages in repo
     runs-on: ubuntu-latest
     needs: delete_package_with_signature
     steps:
