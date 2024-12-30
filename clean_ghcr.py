@@ -164,15 +164,15 @@ def delete_pkgs(owner, repo_name, owner_type, package_names, untagged_only,
             and pkg["name"] not in deps_pkgs
         ]
         if with_sigs:
-            digests = { sha[1]
-                for pkg in packages
-                if len(sha := pkg["name"].split(":")) == 2
+            digests = {
+                sha[1]
+                for pkg in packages if len(sha := pkg["name"].split(":")) == 2
             }
-            old_signed = [ pkg
-                for pkg in all_packages
-                if { sha[1].removesuffix(".sig") for tag
-                     in pkg["metadata"]["container"]["tags"]
-                     if tag and len(sha := tag.split("-")) == 2
+            old_signed = [
+                pkg for pkg in all_packages if {
+                    sha[1].removesuffix(".sig")
+                    for tag in pkg["metadata"]["container"]["tags"]
+                    if tag and len(sha := tag.split("-")) == 2
                 } & digests
             ]
             packages += old_signed
@@ -249,11 +249,9 @@ def get_args():
         help=
         "Except untagged multiplatform packages from deletion (only for --untagged_only) needs docker installed",
     )
-    parser.add_argument(
-        "--with_sigs",
-        type=str2bool,
-        help="Delete old signatures"
-    )
+    parser.add_argument("--with_sigs",
+                        type=str2bool,
+                        help="Delete old signatures")
     args = parser.parse_args()
     if "/" in args.repository:
         repository_owner, repository = args.repository.split("/")
