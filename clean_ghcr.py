@@ -107,6 +107,7 @@ def get_all_package_versions_per_pkg(package_url):
 def get_deps_pkgs(owner, pkgs):
     ids = []
     successful = True
+    login_into_registry(owner)
     for pkg in pkgs:
         for pkg_ver in pkgs[pkg]:
             try:
@@ -118,6 +119,13 @@ def get_deps_pkgs(owner, pkgs):
     if not successful:
         raise Exception("Error on image dependency resolution")
     return ids
+
+def login_into_registry(owner):
+    cmd = f"docker login ghcr.io -u {owner} --password {args.token}"
+    res = subprocess.run(cmd, shell=True)
+    if res.returncode != 0:
+        print(cmd)
+        raise Exception(res.stderr)
 
 
 def get_image_deps(image):
