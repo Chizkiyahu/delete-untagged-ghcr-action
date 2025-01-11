@@ -11,6 +11,10 @@ PER_PAGE = 100  # max 100 defaults 30
 DOCKER_ENDPOINT = "ghcr.io/"
 
 
+class NoManifestErr(Exception):
+    pass
+
+
 def get_url(path):
     if path.startswith(API_ENDPOINT):
         return path
@@ -121,9 +125,12 @@ def get_deps_pkgs(owner, pkgs):
 
 
 def get_image_deps(image):
-    manifest_txt = get_manifest(image)
-    data = json.loads(manifest_txt)
-    return [manifest['digest'] for manifest in data.get("manifests", [])]
+    try:
+        manifest_txt = get_manifest(image)
+        data = json.loads(manifest_txt)
+        return [manifest["digest"] for manifest in data.get("manifests", [])]
+    except NoManifestErr:
+        return []
 
 
 def get_manifest(image):
@@ -131,6 +138,8 @@ def get_manifest(image):
     res = subprocess.run(cmd, shell=True, capture_output=True)
     if res.returncode != 0:
         print(cmd)
+        if res.stderr == b"manifest unknown\n":
+            raise NoManifestErr()
         raise Exception(res.stderr)
     return res.stdout.decode("utf-8")
 
