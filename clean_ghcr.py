@@ -124,6 +124,7 @@ def get_deps_pkgs(owner, pkgs):
         raise Exception("Error on image dependency resolution")
     return ids
 
+
 def login_into_registry(owner):
     cmd = f"docker login ghcr.io -u {owner} --password {args.token}"
     res = subprocess.run(cmd, shell=True)
