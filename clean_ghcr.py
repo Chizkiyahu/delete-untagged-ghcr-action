@@ -154,7 +154,7 @@ def get_manifest(image):
 
 
 def delete_pkgs(owner, repo_name, owner_type, package_names, untagged_only,
-                except_untagged_multiplatform, with_sigs):
+                except_untagged_multiplatform, with_sigs, dry_run):
     if untagged_only:
         all_packages = get_all_package_versions(
             owner=owner,
@@ -201,7 +201,12 @@ def delete_pkgs(owner, repo_name, owner_type, package_names, untagged_only,
             package_names=package_names,
             owner_type=owner_type,
         )
-    status = [del_req(pkg["url"]).ok for pkg in packages]
+    if dry_run:
+        for pkg in packages:
+            print(f"DRY RUn delete {pkg['url']}")
+        status = [True] * len(packages)
+    else:
+        status = [del_req(pkg["url"]).ok for pkg in packages]
     len_ok = len([ok for ok in status if ok])
     len_fail = len(status) - len_ok
 
@@ -270,6 +275,9 @@ def get_args():
     parser.add_argument("--with_sigs",
                         type=str2bool,
                         help="Delete old signatures")
+    parser.add_argument("--dry_run",
+                        type=str2bool,
+                        help="Dry run, do not delete anything")
     args = parser.parse_args()
     if "/" in args.repository:
         repository_owner, repository = args.repository.split("/")
@@ -295,4 +303,5 @@ if __name__ == "__main__":
         untagged_only=args.untagged_only,
         owner_type=args.owner_type,
         except_untagged_multiplatform=args.except_untagged_multiplatform,
-        with_sigs=args.with_sigs)
+        with_sigs=args.with_sigs,
+        dry_run=args.dry_run)
