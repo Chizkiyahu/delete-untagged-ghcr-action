@@ -219,7 +219,7 @@ jobs:
           fi
 
   final_clean_repo:
-    name: Delete all packages in repo
+    name: Delete all packages in repo finally
     runs-on: ubuntu-latest
     needs: delete_multiple_platforms_except_untagged_multiplatform
     steps:
