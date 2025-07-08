@@ -167,3 +167,29 @@ jobs:
           if [[ "${{ steps.deleted-action.outputs.num_deleted }}" != 0 ]]; then
             exit 1
           fi
+
+  add_temp_pkgs_multiple_platforms:
+    name: Add temporary packages for testing
+    needs: reset
+    strategy:
+      matrix:
+        image: ['multiple_platforms']
+        tag: [1]
+    uses: ./.github/workflows/reusable.yml
+    with:
+      image: ${{ matrix.image }}
+      tag: ${{ matrix.tag }}
+      multiplatform: true
+
+  add_temp_pkgs_multiple_platforms_again:
+    name: Add temporary packages for testing again
+    needs: reset
+    strategy:
+      matrix:
+        image: [ 'multiple_platforms' ]
+        tag: [ 1 ]
+    uses: ./.github/workflows/reusable.yml
+    with:
+      image: ${{ matrix.image }}
+      tag: ${{ matrix.tag }}
+      multiplatform: true
