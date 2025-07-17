@@ -35,18 +35,6 @@ jobs:
           yapf  . --verbose --recursive --in-place --parallel > /dev/null
           echo "IS_FORMATTED=$is_formatted" >> $GITHUB_ENV
           echo "is_formatted:  ${{ env.IS_FORMATTED  }}"
-      - name: Create Pull Request
-        if: ${{ env.IS_FORMATTED != 0 }}
-        uses: peter-evans/create-pull-request@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: "Bot action yapf on branch - ${{ github.head_ref }}"
-          commit-message: ":art: Format Python code with yapf"
-          body: |
-            There appear to be some python formatting errors in ${{ github.sha }}. This pull request
-            uses the yapf formatter to fix these issues.
-          base: ${{ github.head_ref }} # Creates pull request onto pull request or commit branch
-          branch: ${{ github.head_ref }}_${{ env.GITHUB_SHA_SHORT }}_yapf
       - name: yapf exit failure
         if: ${{ env.IS_FORMATTED != 0 }}
         run: exit 1
