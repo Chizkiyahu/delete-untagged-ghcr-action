@@ -190,3 +190,22 @@ this action to enable verbose output. The GitHub Actions UI also exposes an
       untagged_only: false
       owner_type: org # or user
 ```
+
+## Debugging
+Set the environment variable `ACTIONS_STEP_DEBUG` to `true` on the step running
+this action to enable verbose output. The GitHub Actions UI also exposes an
+"Enable debug logging" option which sets this variable automatically.
+```yaml
+- name: Delete all containers from repository without tags
+  uses: Chizkiyahu/delete-untagged-ghcr-action@v6
+  env:
+      ACTIONS_STEP_DEBUG: true
+  with:
+      token: ${{ secrets.PAT_TOKEN }}
+      repository_owner: ${{ github.repository_owner }}
+      repository: ${{ github.repository }}
+      untagged_only: true
+      owner_type: org # or user
+      except_untagged_multiplatform: true
+
+```
