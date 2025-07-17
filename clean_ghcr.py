@@ -78,7 +78,9 @@ def get_list_packages(owner, repo_name, owner_type, package_names):
             )
             logger.debug(f"GET {url}")
             response = requests.get(url, headers=get_base_headers())
-            logger.debug(f"-> {response.status_code} {response.text.strip() if not response.ok else 'ok'}")
+            logger.debug(
+                f"-> {response.status_code} {response.text.strip() if not response.ok else 'ok'}"
+            )
             if not response.ok:
                 if response.status_code == 404:
                     return []
@@ -116,7 +118,8 @@ def get_all_package_versions(owner, repo_name, package_names, owner_type):
 def get_all_package_versions_per_pkg(package_url):
     url = f"{package_url}/versions"
     versions = get_req(url)
-    logger.debug(f"Versions for {package_url}: {[v.get('name') for v in versions]}")
+    logger.debug(
+        f"Versions for {package_url}: {[v.get('name') for v in versions]}")
     return versions
 
 
@@ -199,7 +202,8 @@ def delete_pkgs(owner, repo_name, owner_type, package_names, untagged_only,
             if not pkg["metadata"]["container"]["tags"]
             and pkg["name"] not in deps_pkgs
         ]
-        logger.debug(f"Packages to delete (untagged): {[p['url'] for p in packages]}")
+        logger.debug(
+            f"Packages to delete (untagged): {[p['url'] for p in packages]}")
         if with_sigs:
             digests = {
                 sha[1]
