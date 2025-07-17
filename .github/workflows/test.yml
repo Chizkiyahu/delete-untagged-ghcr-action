@@ -56,7 +56,7 @@ jobs:
       multiplatform: true
 
   clean_untagged_pkgs1:
-    name: Clean untagged packages
+    name: Clean untagged packages - debug mode
     runs-on: ubuntu-latest
     needs: add_temp_pkgs2
     steps:
@@ -71,6 +71,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: ./
         id: deleted-action
+        env:
+          ACTIONS_STEP_DEBUG: 'true'
         with:
           token: ${{ secrets.PAT_TOKEN }}
           repository_owner: ${{ github.repository_owner }}
