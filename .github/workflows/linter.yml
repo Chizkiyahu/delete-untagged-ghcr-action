@@ -37,7 +37,7 @@ jobs:
           echo "is_formatted:  ${{ env.IS_FORMATTED  }}"
       - name: Create Pull Request
         if: ${{ env.IS_FORMATTED != 0 }}
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: "Bot action yapf on branch - ${{ github.head_ref }}"
