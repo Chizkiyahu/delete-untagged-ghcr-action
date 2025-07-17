@@ -69,10 +69,8 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-        - uses: ./
-          env:
-            ACTIONS_STEP_DEBUG: 'true'
-          id: deleted-action
+      - uses: ./
+        id: deleted-action
         with:
           token: ${{ secrets.PAT_TOKEN }}
           repository_owner: ${{ github.repository_owner }}
@@ -108,7 +106,7 @@ jobs:
           fi
 
   delete_package:
-    name: Delete package
+    name: Delete package with debug mode
     runs-on: ubuntu-latest
     needs: clean_untagged_pkgs2
     steps:
