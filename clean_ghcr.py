@@ -11,7 +11,6 @@ API_ENDPOINT = "https://api.github.com"
 PER_PAGE = 100  # max 100 defaults 30
 DOCKER_ENDPOINT = "ghcr.io/"
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -40,9 +39,7 @@ def del_req(path):
     if res.ok:
         print(f"Deleted {path}")
     else:
-        print(
-            f"Error when trying to delete URL: {url} MSG: {res.text}"
-        )
+        print(f"Error when trying to delete URL: {url} MSG: {res.text}")
     return res
 
 
@@ -120,7 +117,8 @@ def get_all_package_versions(owner, repo_name, package_names, owner_type):
 def get_all_package_versions_per_pkg(package_url):
     url = f"{package_url}/versions"
     versions = get_req(url)
-    logger.debug("Versions for %s: %s", package_url, [v.get("name") for v in versions])
+    logger.debug("Versions for %s: %s", package_url,
+                 [v.get("name") for v in versions])
     return versions
 
 
@@ -303,12 +301,10 @@ def get_args():
     parser.add_argument("--dry_run",
                         type=str2bool,
                         help="Dry run, do not delete anything")
-    parser.add_argument(
-        "--debug",
-        type=str2bool,
-        default=False,
-        help="Enable debug output"
-    )
+    parser.add_argument("--debug",
+                        type=str2bool,
+                        default=False,
+                        help="Enable debug output")
     args = parser.parse_args()
     if os.getenv("ACTIONS_STEP_DEBUG", "").lower() == "true":
         args.debug = True
@@ -324,9 +320,8 @@ def get_args():
     args.package_names = args.package_names.lower()
     args.package_names = [p.strip() for p in args.package_names.split(",")
                           ] if args.package_names else []
-    logging.basicConfig(
-        level=logging.DEBUG if args.debug else logging.INFO,
-        format="%(message)s")
+    logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO,
+                        format="%(message)s")
     return args
 
 
