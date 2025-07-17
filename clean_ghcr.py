@@ -33,13 +33,13 @@ def get_base_headers():
 
 def del_req(path):
     url = get_url(path)
-    logger.debug("DELETE %s", url)
+    logger.debug(f"DELETE {url}")
     res = requests.delete(url, headers=get_base_headers())
-    logger.debug("-> %s %s", res.status_code, res.text.strip())
+    logger.debug(f"-> {res.status_code} {res.text.strip()}", )
     if res.ok:
-        print(f"Deleted {path}")
+        logger.info(f"Deleted {path}")
     else:
-        print(f"Error when trying to delete URL: {url} MSG: {res.text}")
+        logger.error(f"Error when trying to delete URL: {url} MSG: {res.text}")
     return res
 
 
@@ -76,10 +76,9 @@ def get_list_packages(owner, repo_name, owner_type, package_names):
             url = get_url(
                 f"/{owner_type}s/{owner}/packages/container/{clean_package_name}"
             )
-            logger.debug("GET %s", url)
+            logger.debug(f"GET {url}")
             response = requests.get(url, headers=get_base_headers())
-            logger.debug("-> %s %s", response.status_code,
-                         response.text.strip() if not response.ok else "ok")
+            logger.debug(f"-> {response.status_code} {response.text.strip() if not response.ok else 'ok'}")
             if not response.ok:
                 if response.status_code == 404:
                     return []
@@ -117,8 +116,7 @@ def get_all_package_versions(owner, repo_name, package_names, owner_type):
 def get_all_package_versions_per_pkg(package_url):
     url = f"{package_url}/versions"
     versions = get_req(url)
-    logger.debug("Versions for %s: %s", package_url,
-                 [v.get("name") for v in versions])
+    logger.debug(f"Versions for {package_url}: {[v.get('name') for v in versions]}")
     return versions
 
 
@@ -130,7 +128,7 @@ def get_deps_pkgs(owner, pkgs):
         for pkg_ver in pkgs[pkg]:
             try:
                 image = f"{DOCKER_ENDPOINT}{owner}/{pkg}@{pkg_ver['name']}"
-                logger.debug("Inspect image %s", image)
+                logger.debug(f"Inspect image {image}")
                 ids.extend(get_image_deps(image))
             except Exception as e:
                 print(e)
@@ -142,9 +140,9 @@ def get_deps_pkgs(owner, pkgs):
 
 def login_into_registry(owner):
     cmd = f"docker login ghcr.io -u {owner} --password {args.token}"
-    logger.debug("Running: %s", cmd)
+    logger.debug(f"Running: {cmd}")
     res = subprocess.run(cmd, shell=True)
-    logger.debug("-> return code %s", res.returncode)
+    logger.debug(f"-> return code {res.returncode}")
     if res.returncode != 0:
         print(cmd)
         raise Exception(res.stderr)
@@ -153,7 +151,7 @@ def login_into_registry(owner):
 def get_image_deps(image):
     try:
         manifest_txt = get_manifest(image)
-        logger.debug("Manifest for %s: %s", image, manifest_txt.strip())
+        logger.debug(f"Manifest for {image}: {manifest_txt.strip()}")
         data = json.loads(manifest_txt)
         return [manifest["digest"] for manifest in data.get("manifests", [])]
     except NoManifestErr:
@@ -162,9 +160,9 @@ def get_image_deps(image):
 
 def get_manifest(image):
     cmd = f"docker manifest inspect {image}"
-    logger.debug("Running: %s", cmd)
+    logger.debug(f"Running: {cmd}")
     res = subprocess.run(cmd, shell=True, capture_output=True)
-    logger.debug("-> return code %s", res.returncode)
+    logger.debug(f"-> return code {res.returncode}")
     if res.returncode != 0:
         print(cmd)
         if res.stderr == b"manifest unknown\n":
@@ -201,8 +199,7 @@ def delete_pkgs(owner, repo_name, owner_type, package_names, untagged_only,
             if not pkg["metadata"]["container"]["tags"]
             and pkg["name"] not in deps_pkgs
         ]
-        logger.debug("Packages to delete (untagged): %s",
-                     [p["url"] for p in packages])
+        logger.debug(f"Packages to delete (untagged): {[p['url'] for p in packages]}")
         if with_sigs:
             digests = {
                 sha[1]
@@ -223,7 +220,7 @@ def delete_pkgs(owner, repo_name, owner_type, package_names, untagged_only,
             package_names=package_names,
             owner_type=owner_type,
         )
-    logger.debug("Packages to delete: %s", [p.get("url") for p in packages])
+    logger.debug(f"Packages to delete: {[p.get('url') for p in packages]}")
     if dry_run:
         for pkg in packages:
             print(f"DRY RUn delete {pkg['url']}")
@@ -233,7 +230,7 @@ def delete_pkgs(owner, repo_name, owner_type, package_names, untagged_only,
     len_ok = len([ok for ok in status if ok])
     len_fail = len(status) - len_ok
 
-    print(f"Deleted {len_ok} package")
+    logger.info(f"Deleted {len_ok} package")
     if "GITHUB_OUTPUT" in os.environ:
         with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"num_deleted={len_ok}\n")
