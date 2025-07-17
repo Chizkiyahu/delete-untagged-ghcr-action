@@ -54,6 +54,11 @@ delete all / untagged ghcr containers in a repository
 ```
 <!-- end usage -->
 
+## Debugging
+Set the environment variable `ACTIONS_STEP_DEBUG` to `true` on the step running
+this action to enable verbose output. The GitHub Actions UI also exposes an
+"Enable debug logging" option which sets this variable automatically.
+
 ## Scenarios
 - [Delete all owner containers without tags](#delete-all-owner-containers-without-tags)
 - [Delete all owner containers](#delete-all-owner-containers)
