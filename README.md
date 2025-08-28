@@ -68,6 +68,9 @@ this action to enable verbose output. The GitHub Actions UI also exposes an
 - [Delete all containers from package with signatures](#delete-all-containers-from-package-without-tags-and-corresponding-tagged-signatures)
 - [Delete all containers from package](#delete-all-containers-from-package)
 
+> [!IMPORTANT]
+> to delete all owner containers pass `repository: ''`
+
 ## Delete all owner containers without tags
 ```yaml
 - name: Delete all owner containers without tags
@@ -76,6 +79,7 @@ this action to enable verbose output. The GitHub Actions UI also exposes an
       token: ${{ secrets.PAT_TOKEN }}
       repository_owner: ${{ github.repository_owner }}
       owner_type: org # or user
+      repository: ''
 ```
 
 ## Delete all owner containers
@@ -87,6 +91,7 @@ this action to enable verbose output. The GitHub Actions UI also exposes an
         repository_owner: ${{ github.repository_owner }}
         untagged_only: false
         owner_type: org # or user
+        repository: ''
 ```
 
 ## Delete all containers from repository without tags
