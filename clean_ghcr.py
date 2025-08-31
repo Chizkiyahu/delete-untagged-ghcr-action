@@ -21,7 +21,7 @@ class NoManifestErr(Exception):
 def get_url(path):
     if path.startswith(API_ENDPOINT):
         return path
-    return f"{API_ENDPOINT}{path}"
+    return f"{API_ENDPOINT}{path}".lower()
 
 
 def get_base_headers():
