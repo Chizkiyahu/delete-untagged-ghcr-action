@@ -20,7 +20,7 @@ class NoManifestErr(Exception):
 
 def get_url(path):
     if path.startswith(API_ENDPOINT):
-        return path
+        return path.lower()
     return f"{API_ENDPOINT}{path}".lower()
 
 
